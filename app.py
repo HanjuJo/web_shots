@@ -18,6 +18,17 @@ st.markdown(load_css("styles.css"), unsafe_allow_html=True)
 st.title("📊 **유튜브 분석 대시보드**")
 st.markdown("💡 *더 직관적이고 시각적인 UI로 유튜브 성과를 분석해 보세요!*")
 
+
+# 🌟 ✅ 상단 광고 배너 추가 ✅
+st.markdown("""
+<div style="text-align: center; margin: 20px 0;">
+    <a href="https://link.coupang.com/a/cfwtVx" target="_blank">
+        <img src="https://image.coupangcdn.com/image/banner/파트너스배너이미지.jpg" alt="쿠팡 광고" width="100%">
+    </a>
+</div>
+""", unsafe_allow_html=True)
+
+
 # 🌟 각 기능을 카드 형태로 구성
 col1, col2, col3 = st.columns(3)
 
@@ -88,6 +99,16 @@ with col5:
         schedule = recommend_upload_time()
         st.success(schedule)
     st.markdown("</div>", unsafe_allow_html=True)
+
+
+# 🌟 ✅ 하단 광고 배너 추가 ✅
+st.markdown("""
+<div style="text-align: center; margin: 40px 0;">
+    <a href="https://link.coupang.com/a/파트너스링크" target="_blank">
+        <img src="https://image.coupangcdn.com/image/banner/파트너스배너이미지.jpg" alt="쿠팡 광고" width="100%">
+    </a>
+</div>
+""", unsafe_allow_html=True)
 
 
 # 📝 하단 설명 및 도움말
