@@ -1,45 +1,66 @@
+/* 전체 페이지 스타일 */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7f8;
+    color: #333333;
+    padding: 20px;
+}
+
 /* 카드 컨테이너 스타일 */
 .card {
-    border: 1px solid #e1e4e8;
-    border-radius: 10px;
+    border-radius: 15px;
     padding: 20px;
     margin: 10px;
-    background-color: #ffffff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    color: #ffffff;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    text-align: center;
 }
 
 .card:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
+/* 각 카드의 고유 배경색 */
+.card-1 { background-color: #4CAF50; }  /* 초록색 - 쇼츠 트렌드 */
+.card-2 { background-color: #2196F3; }  /* 파란색 - 채널 분석 */
+.card-3 { background-color: #FF9800; }  /* 주황색 - 수익 계산기 */
+.card-4 { background-color: #9C27B0; }  /* 보라색 - 경쟁 채널 */
+.card-5 { background-color: #E91E63; }  /* 핑크색 - 업로드 일정 */
+
+/* 카드 제목 스타일 */
 .card-title {
-    font-size: 18px;
+    font-size: 22px;
     font-weight: bold;
-    color: #0078ff;
     margin-bottom: 15px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
 }
 
-.card-content {
-    font-size: 16px;
-    color: #333333;
-    margin-bottom: 10px;
-}
-
+/* 카드 버튼 스타일 */
 .card-button {
     display: inline-block;
-    padding: 8px 12px;
-    background-color: #0078ff;
-    color: #ffffff;
-    border-radius: 5px;
+    padding: 10px 15px;
+    background-color: #ffffff;
+    color: #333333;
+    border-radius: 8px;
     text-align: center;
     cursor: pointer;
     text-decoration: none;
     font-weight: bold;
     transition: background-color 0.3s ease;
+    border: none;
+    outline: none;
 }
 
 .card-button:hover {
-    background-color: #005bb5;
+    background-color: #eeeeee;
+}
+
+/* 구분선 스타일 */
+.divider {
+    border-bottom: 2px solid #dddddd;
+    margin: 30px 0;
 }
