@@ -19,12 +19,10 @@ st.title("📊 **유튜브 분석 대시보드**")
 st.markdown("💡 *더 직관적이고 시각적인 UI로 유튜브 성과를 분석해 보세요!*")
 
 
-# 🌟 ✅ 상단 광고 배너 추가 ✅
+# 🌟 ✅ 상단 광고 삽입 ✅
 st.markdown("""
 <div style="text-align: center; margin: 20px 0;">
-    <a href="https://link.coupang.com/a/cfwtVx" target="_blank">
-        <img src="https://image.coupangcdn.com/image/banner/파트너스배너이미지.jpg" alt="쿠팡 광고" width="100%">
-    </a>
+    <iframe src="https://coupa.ng/cho3mu" width="120" height="240" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" browsingtopics></iframe>
 </div>
 """, unsafe_allow_html=True)
 
@@ -32,7 +30,7 @@ st.markdown("""
 # 🌟 각 기능을 카드 형태로 구성
 col1, col2, col3 = st.columns(3)
 
-# 🔥 쇼츠 트렌드 분석 카드 (초록색)
+# 🔥 쇼츠 트렌드 분석 카드
 with col1:
     st.markdown("<div class='card card-1'>", unsafe_allow_html=True)
     st.markdown("<div class='card-title'>🔥 쇼츠 트렌드 분석</div>", unsafe_allow_html=True)
@@ -48,7 +46,7 @@ with col1:
     st.markdown("</div>", unsafe_allow_html=True)
 
 
-# 📺 채널 분석 카드 (파란색)
+# 📺 채널 분석 카드
 with col2:
     st.markdown("<div class='card card-2'>", unsafe_allow_html=True)
     st.markdown("<div class='card-title'>📺 채널 분석</div>", unsafe_allow_html=True)
@@ -62,7 +60,7 @@ with col2:
     st.markdown("</div>", unsafe_allow_html=True)
 
 
-# 💰 수익 계산기 카드 (주황색)
+# 💰 수익 계산기 카드
 with col3:
     st.markdown("<div class='card card-3'>", unsafe_allow_html=True)
     st.markdown("<div class='card-title'>💰 수익 계산기</div>", unsafe_allow_html=True)
@@ -76,7 +74,7 @@ with col3:
 # 🌟 두 번째 행의 카드
 col4, col5 = st.columns(2)
 
-# 🏆 경쟁 채널 분석 카드 (보라색)
+# 🏆 경쟁 채널 분석 카드
 with col4:
     st.markdown("<div class='card card-4'>", unsafe_allow_html=True)
     st.markdown("<div class='card-title'>🏆 경쟁 채널 분석</div>", unsafe_allow_html=True)
@@ -91,7 +89,7 @@ with col4:
     st.markdown("</div>", unsafe_allow_html=True)
 
 
-# ⏰ 업로드 일정 추천 카드 (핑크색)
+# ⏰ 업로드 일정 추천 카드
 with col5:
     st.markdown("<div class='card card-5'>", unsafe_allow_html=True)
     st.markdown("<div class='card-title'>⏰ 업로드 일정 추천</div>", unsafe_allow_html=True)
@@ -101,12 +99,10 @@ with col5:
     st.markdown("</div>", unsafe_allow_html=True)
 
 
-# 🌟 ✅ 하단 광고 배너 추가 ✅
+# 🌟 ✅ 하단 광고 삽입 ✅
 st.markdown("""
 <div style="text-align: center; margin: 40px 0;">
-    <a href="https://link.coupang.com/a/파트너스링크" target="_blank">
-        <img src="https://image.coupangcdn.com/image/banner/파트너스배너이미지.jpg" alt="쿠팡 광고" width="100%">
-    </a>
+    <iframe src="https://coupa.ng/cho3mu" width="120" height="240" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" browsingtopics></iframe>
 </div>
 """, unsafe_allow_html=True)
 
