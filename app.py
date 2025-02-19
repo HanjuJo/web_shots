@@ -3,6 +3,7 @@ from scripts.youtube_scraper import (
     get_shorts_trends, get_channel_info, calculate_youtube_earnings,
     recommend_competitor_channels, recommend_upload_time
 )
+from scripts.shorts_tips import get_shorts_tips
 
 
 # 🌟 CSS 파일 로드
@@ -22,7 +23,7 @@ st.markdown("💡 *더 직관적이고 시각적인 UI로 유튜브 성과를 �
 # 🌟 ✅ 상단 광고 삽입 ✅
 st.markdown("""
 <div style="text-align: center; margin: 20px 0;">
-    <iframe src="https://coupa.ng/cho3mu" width="240" height="240" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" browsingtopics></iframe>
+    <iframe src="https://coupa.ng/cho3mu" width="120" height="240" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" browsingtopics></iframe>
 </div>
 """, unsafe_allow_html=True)
 
@@ -99,10 +100,23 @@ with col5:
     st.markdown("</div>", unsafe_allow_html=True)
 
 
+# 🌟 🎥 숏츠 편집 노하우 추가 (카테고리 선택 가능)
+st.markdown("<div class='divider'></div>", unsafe_allow_html=True)
+st.subheader("🎥 **숏츠 편집 노하우**")
+category = st.selectbox(
+    "📂 **카테고리를 선택하세요**",
+    ["기본 편집 기술", "시각적 효과", "사운드 디자인", "알고리즘 최적화"]
+)
+if st.button("📢 노하우 보기"):
+    tips = get_shorts_tips(category)
+    for tip in tips:
+        st.write(tip)
+
+
 # 🌟 ✅ 하단 광고 삽입 ✅
 st.markdown("""
 <div style="text-align: center; margin: 40px 0;">
-    <iframe src="https://coupa.ng/cho3mu" width="240" height="240" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" browsingtopics></iframe>
+    <iframe src="https://coupa.ng/cho3mu" width="120" height="240" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" browsingtopics></iframe>
 </div>
 """, unsafe_allow_html=True)
 
