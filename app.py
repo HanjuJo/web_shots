@@ -23,7 +23,7 @@ st.markdown("💡 *더 직관적이고 시각적인 UI로 유튜브 성과를 �
 # 🌟 ✅ 상단 광고 삽입 ✅
 st.markdown("""
 <div style="text-align: center; margin: 20px 0;">
-    <iframe src="https://coupa.ng/cho3mu" width="120" height="240" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" browsingtopics></iframe>
+    <iframe src="https://coupa.ng/cho3mu" width="240" height="240" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" browsingtopics></iframe>
 </div>
 """, unsafe_allow_html=True)
 
@@ -116,7 +116,7 @@ if st.button("📢 노하우 보기"):
 # 🌟 ✅ 하단 광고 삽입 ✅
 st.markdown("""
 <div style="text-align: center; margin: 40px 0;">
-    <iframe src="https://coupa.ng/cho3mu" width="120" height="240" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" browsingtopics></iframe>
+    <iframe src="https://coupa.ng/cho3mu" width="240" height="240" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" browsingtopics></iframe>
 </div>
 """, unsafe_allow_html=True)
 
