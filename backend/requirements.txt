@@ -1,0 +1,9 @@
+
+numpy
+streamlit
+plotly[express]
+yt-dlp
+openai
+fastapi
+uvicorn
+pymongo
