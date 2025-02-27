@@ -3,6 +3,7 @@
     <h2>주요 기능</h2>
     <div class="feature-list">
       <div class="feature-card" v-for="(feature, index) in features" :key="index">
+        <i :class="getIconClass(index)"></i>
         <span>{{ feature }}</span>
       </div>
     </div>
@@ -23,11 +24,21 @@ export default {
     axios.get('http://localhost:5001/api/features')
       .then(response => {
         this.features = response.data;
-        console.log('Features loaded:', this.features);  // 데이터 잘 왔는지 확인
       })
       .catch(error => {
-        console.error('Error fetching features:', error);  // 에러 있으면 여기서 출력
+        console.error('Error fetching features:', error);
       });
+  },
+  methods: {
+    getIconClass(index) {
+      const icons = [
+        'fab fa-youtube',          // 유튜브 트렌드 분석 (브랜드 아이콘)
+        'fas fa-video',            // AI 기반 영상 편집 (솔리드 아이콘)
+        'fas fa-closed-captioning', // 자동 자막 생성 (솔리드 아이콘)
+        'fas fa-image'             // 썸네일 자동 생성 (솔리드 아이콘)
+      ];
+      return icons[index];
+    }
   }
 }
 </script>
@@ -57,5 +68,11 @@ h2 {
 }
 .feature-card:hover {
   transform: scale(1.05);
+}
+.feature-card i {
+  display: block;
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  color: #007bff;
 }
 </style>
