@@ -11,23 +11,17 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
   name: 'FeatureList',
   data() {
     return {
-      features: []
+      features: [
+        "유튜브 트렌드 분석",
+        "AI 기반 영상 편집",
+        "자동 자막 생성",
+        "썸네일 자동 생성"
+      ]
     };
-  },
-  mounted() {
-    axios.get('http://localhost:5001/api/features')
-      .then(response => {
-        this.features = response.data;
-      })
-      .catch(error => {
-        console.error('Error fetching features:', error);
-      });
   },
   methods: {
     getIconClass(index) {
