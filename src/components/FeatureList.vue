@@ -1,32 +1,38 @@
 <template>
   <section class="features">
     <h2>주요 기능</h2>
-    <ul>
-      <li v-for="(feature, index) in features" :key="index">
-        {{ feature }}
-      </li>
-    </ul>
+    <div class="feature-list">
+      <div class="feature-card" v-for="(feature, index) in features" :key="index">
+        <span>{{ feature }}</span>
+      </div>
+    </div>
   </section>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
-  name: 'FeatureList',  // 'Features' → 'FeatureList'
+  name: 'FeatureList',
   data() {
     return {
-      features: [
-        '유튜브 트렌드 분석',
-        'AI 기반 영상 편집',
-        '자동 자막 생성',
-        '썸네일 자동 생성'
-      ]
+      features: []
     };
+  },
+  mounted() {
+    axios.get('http://localhost:5001/api/features')
+      .then(response => {
+        this.features = response.data;
+        console.log('Features loaded:', this.features);  // 데이터 잘 왔는지 확인
+      })
+      .catch(error => {
+        console.error('Error fetching features:', error);  // 에러 있으면 여기서 출력
+      });
   }
 }
 </script>
 
 <style scoped>
-/* 기존 스타일 유지 */
 .features {
   margin: 40px 0;
 }
@@ -34,18 +40,22 @@ h2 {
   font-size: 1.8em;
   color: #444;
 }
-ul {
-  list-style: none;
-  padding: 0;
+.feature-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
 }
-li {
-  margin: 15px 0;
-  font-size: 1.1em;
-  padding: 10px;
+.feature-card {
   background-color: #f0f8ff;
-  border-radius: 5px;
-  max-width: 400px;
-  margin-left: auto;
-  margin-right: auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 200px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+}
+.feature-card:hover {
+  transform: scale(1.05);
 }
 </style>
