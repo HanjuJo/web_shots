@@ -16,5 +16,5 @@ def get_features():
     return jsonify(features)
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5001))  # Heroku 포트 동적 할당
+    port = int(os.environ.get('PORT', 5001))
     app.run(host='0.0.0.0', port=port, debug=True)
