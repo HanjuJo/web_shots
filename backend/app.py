@@ -1,8 +1,9 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
+import os
 
 app = Flask(__name__)
-CORS(app)  # 모든 출처 허용 (개발용)
+CORS(app)
 
 @app.route('/api/features')
 def get_features():
@@ -15,4 +16,5 @@ def get_features():
     return jsonify(features)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    port = int(os.environ.get('PORT', 5001))  # Heroku 포트 동적 할당
+    app.run(host='0.0.0.0', port=port, debug=True)
