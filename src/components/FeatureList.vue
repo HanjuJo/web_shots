@@ -3,7 +3,7 @@
     <h2>주요 기능</h2>
     <div class="feature-list">
       <div class="feature-card" v-for="(feature, index) in features" :key="index">
-        <i :class="getIconClass(index)"></i>
+        <i :class="getIconClass(index)" :style="getIconStyle(index)"></i>
         <span>{{ feature }}</span>
       </div>
     </div>
@@ -32,12 +32,21 @@ export default {
   methods: {
     getIconClass(index) {
       const icons = [
-        'fab fa-youtube',          // 유튜브 트렌드 분석 (브랜드 아이콘)
-        'fas fa-video',            // AI 기반 영상 편집 (솔리드 아이콘)
-        'fas fa-closed-captioning', // 자동 자막 생성 (솔리드 아이콘)
-        'fas fa-image'             // 썸네일 자동 생성 (솔리드 아이콘)
+        'fab fa-youtube',
+        'fas fa-video',
+        'fas fa-closed-captioning',
+        'fas fa-image'
       ];
       return icons[index];
+    },
+    getIconStyle(index) {
+      const colors = [
+        '#ff0000',  // YouTube 빨강
+        '#007bff',  // 기본 파랑
+        '#007bff',
+        '#007bff'
+      ];
+      return { color: colors[index] };
     }
   }
 }
@@ -64,7 +73,7 @@ h2 {
   width: 200px;
   text-align: center;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s;
+  animation: fadeIn 0.5s ease-in;
 }
 .feature-card:hover {
   transform: scale(1.05);
@@ -73,6 +82,9 @@ h2 {
   display: block;
   font-size: 1.5em;
   margin-bottom: 10px;
-  color: #007bff;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>
