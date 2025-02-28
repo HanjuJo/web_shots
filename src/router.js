@@ -7,10 +7,10 @@ import PricingPlan from './components/PricingPlan.vue';
 Vue.use(VueRouter);
 
 const routes = [
-  { path: '/home', component: HomePage },
-  { path: '/features', component: FeatureList },
-  { path: '/pricing', component: PricingPlan },
-  { path: '/', redirect: '/home' } // 기본 경로를 /home으로 리다이렉트
+  { path: '/home', component: HomePage, meta: { transition: 'fade' } },
+  { path: '/features', component: FeatureList, meta: { transition: 'fade' } },
+  { path: '/pricing', component: PricingPlan, meta: { transition: 'fade' } },
+  { path: '/', redirect: '/home' }
 ];
 
 const router = new VueRouter({

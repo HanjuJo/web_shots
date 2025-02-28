@@ -1,9 +1,19 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import os
+import sqlite3
 
 app = Flask(__name__)
 CORS(app)
+
+def init_db():
+    conn = sqlite3.connect('emails.db')
+    c = conn.cursor()
+    c.execute('''CREATE TABLE IF NOT EXISTS emails (id INTEGER PRIMARY KEY, email TEXT)''')
+    conn.commit()
+    conn.close()
+
+init_db()
 
 @app.route('/')
 def hello():
@@ -18,6 +28,36 @@ def get_features():
         "썸네일 자동 생성"
     ]
     return jsonify(features)
+
+@app.route('/api/trends')
+def get_trends():
+    trends = [
+        {"title": "짧은 쇼츠 영상", "views": "1.2M"},
+        {"title": "AI 튜토리얼", "views": "850K"},
+        {"title": "DIY 공예", "views": "600K"}
+    ]
+    return jsonify(trends)
+
+@app.route('/api/emails', methods=['POST'])
+def save_email():
+    email = request.json.get('email')
+    if email:
+        conn = sqlite3.connect('emails.db')
+        c = conn.cursor()
+        c.execute("INSERT INTO emails (email) VALUES (?)", (email,))
+        conn.commit()
+        conn.close()
+        return jsonify({"message": "이메일 저장 성공!"}), 200
+    return jsonify({"message": "이메일 필요!"}), 400
+
+@app.route('/api/emails', methods=['GET'])
+def get_emails():
+    conn = sqlite3.connect('emails.db')
+    c = conn.cursor()
+    c.execute("SELECT email FROM emails")
+    emails = [row[0] for row in c.fetchall()]
+    conn.close()
+    return jsonify(emails)
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5001))
