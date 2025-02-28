@@ -29,3 +29,7 @@ Streamlit 배포: [크리에이터 툴 테스트](https://webshortsgrok3-jvkhzwd
 
 # Web Shorts Grok3
 Deployed at: [https://creatortool.netlify.app/](https://creatortool.netlify.app/)
+
+# Web Shorts Grok3
+Frontend: [https://creatortool.netlify.app/](https://creatortool.netlify.app/)
+Backend: [https://creatortool-backend-123-c965e7aaa680.herokuapp.com/](https://creatortool-backend-123-c965e7aaa680.herokuapp.com/)
