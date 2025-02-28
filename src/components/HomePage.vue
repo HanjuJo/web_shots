@@ -11,6 +11,16 @@
     <ul>
       <li v-for="(email, index) in emailList" :key="index">{{ email }}</li>
     </ul>
+    <div class="analyze-form">
+      <h3>채널 분석</h3>
+      <input v-model="channelUrl" placeholder="유튜브 영상 URL" @keyup.enter="analyzeChannel" />
+      <button @click="analyzeChannel">분석</button>
+      <div v-if="analysis">
+        <p>키워드: {{ analysis.keywords.join(', ') }}</p>
+        <p>해시태그: {{ analysis.hashtags.join(', ') }}</p>
+        <p>예상 조회수: {{ analysis.predicted_views }}</p>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -23,7 +33,9 @@ export default {
     return {
       email: '',
       message: '',
-      emailList: []
+      emailList: [],
+      channelUrl: '',
+      analysis: null
     };
   },
   mounted() {
@@ -50,6 +62,17 @@ export default {
         this.emailList = response.data;
       } catch (error) {
         console.error('Error fetching emails:', error);
+      }
+    },
+    async analyzeChannel() {
+      if (this.channelUrl) {
+        try {
+          const response = await axios.post('https://creatortool-backend-123-c965e7aaa680.herokuapp.com/api/analyze', { url: this.channelUrl });
+          this.analysis = response.data;
+          this.channelUrl = '';
+        } catch (error) {
+          console.error('Error analyzing channel:', error);
+        }
       }
     }
   }
@@ -101,5 +124,30 @@ li {
   background: #f0f8ff;
   margin: 5px 0;
   border-radius: 5px;
+}
+
+.analyze-form {
+  margin-top: 20px;
+}
+.analyze-form input {
+  padding: 10px;
+  width: 70%;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.analyze-form button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.analyze-form button:hover {
+  background-color: #0056b3;
+}
+.analyze-form p {
+  margin: 5px 0;
 }
 </style>

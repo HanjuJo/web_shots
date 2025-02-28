@@ -38,6 +38,19 @@ def get_trends():
     ]
     return jsonify(trends)
 
+@app.route('/api/analyze', methods=['POST'])
+def analyze_channel():
+    url = request.json.get('url')
+    if url:
+        # 나중에 YouTube API로 대체
+        analysis = {
+            "keywords": ["트렌드", "숏츠", "AI"],
+            "hashtags": ["#Shorts", "#YouTube", "#Trend"],
+            "predicted_views": "500K"
+        }
+        return jsonify(analysis), 200
+    return jsonify({"message": "URL 필요!"}), 400
+
 @app.route('/api/emails', methods=['POST'])
 def save_email():
     email = request.json.get('email')

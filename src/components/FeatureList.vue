@@ -10,13 +10,27 @@
         <span>{{ feature }}</span>
       </div>
     </div>
-    <div class="modal" v-if="showModalFlag">
-      <div class="modal-content">
-        <h3>{{ selectedFeature }}</h3>
-        <p>{{ getFeatureDescription(selectedIndex) }}</p>
-        <button @click="closeModal">닫기</button>
+    <div class="trends">
+      <h3>최신 트렌드</h3>
+      <div v-if="trendsLoading" class="spinner">
+        <i class="fas fa-spinner fa-spin"></i> 트렌드 로딩 중...
       </div>
+      <table v-else>
+        <thead>
+          <tr>
+            <th>제목</th>
+            <th>조회수</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(trend, index) in trends" :key="index">
+            <td>{{ trend.title }}</td>
+            <td>{{ trend.views }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+    <!-- 기존 모달 및 댓글 유지 -->
   </section>
 </template>
 
@@ -31,23 +45,36 @@ export default {
       loading: true,
       showModalFlag: false,
       selectedFeature: '',
-      selectedIndex: null
+      selectedIndex: null,
+      trends: [],
+      trendsLoading: true
     };
   },
   mounted() {
-    setTimeout(() => {
-      axios.get('https://creatortool-backend-123-c965e7aaa680.herokuapp.com/api/features')
-        .then(response => {
-          this.features = response.data;
-          this.loading = false;
-        })
-        .catch(error => {
-          console.error('Error fetching features:', error);
-          this.loading = false;
-        });
-    }, 1000); // 1초 딜레이로 로딩 효과 확인
+    this.fetchFeatures();
+    this.fetchTrends();
   },
   methods: {
+    async fetchFeatures() {
+      try {
+        const response = await axios.get('https://creatortool-backend-123-c965e7aaa680.herokuapp.com/api/features');
+        this.features = response.data;
+        this.loading = false;
+      } catch (error) {
+        console.error('Error fetching features:', error);
+        this.loading = false;
+      }
+    },
+    async fetchTrends() {
+      try {
+        const response = await axios.get('https://creatortool-backend-123-c965e7aaa680.herokuapp.com/api/trends');
+        this.trends = response.data;
+        this.trendsLoading = false;
+      } catch (error) {
+        console.error('Error fetching trends:', error);
+        this.trendsLoading = false;
+      }
+    },
     getIconClass(index) {
       const icons = [
         'fab fa-youtube',
@@ -160,5 +187,27 @@ h2 {
 }
 .modal-content button:hover {
   background-color: #0056b3;
+}
+
+.trends {
+  margin-top: 40px;
+}
+.trends h3 {
+  color: #444;
+}
+table {
+  width: 80%;
+  margin: 20px auto;
+  border-collapse: collapse;
+  background: #f0f8ff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+th, td {
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+th {
+  background: #007bff;
+  color: white;
 }
 </style>
