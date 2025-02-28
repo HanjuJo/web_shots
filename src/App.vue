@@ -3,14 +3,19 @@
     <header>
       <h1>크리에이터 툴</h1>
       <p>유튜브와 숏폼 크리에이터를 위한 올인원 솔루션</p>
-      <nav>
-        <router-link to="/home">홈</router-link>
-        <router-link to="/features">기능 소개</router-link>
-        <router-link to="/pricing">가격</router-link>
-        <button @click="toggleDarkMode" class="mode-toggle">
-          {{ isDarkMode ? '라이트 모드' : '다크 모드' }}
+      <nav :class="{ 'open': isNavOpen }">
+        <button class="hamburger" @click="toggleNav">
+          <i :class="isNavOpen ? 'fas fa-times' : 'fas fa-bars'"></i>
         </button>
-        <button @click="showLoginModal" class="login-btn">로그인</button>
+        <div class="nav-links">
+          <router-link to="/home" @click="closeNav">홈</router-link>
+          <router-link to="/features" @click="closeNav">기능 소개</router-link>
+          <router-link to="/pricing" @click="closeNav">가격</router-link>
+          <button @click="toggleDarkMode" class="mode-toggle">
+            {{ isDarkMode ? '라이트 모드' : '다크 모드' }}
+          </button>
+          <button @click="showLoginModal" class="login-btn">로그인</button>
+        </div>
       </nav>
     </header>
     <main>
@@ -55,7 +60,8 @@ export default {
       showLogin: false,
       username: '',
       password: '',
-      loginMessage: ''
+      loginMessage: '',
+      isNavOpen: false
     };
   },
   mounted() {
@@ -98,6 +104,12 @@ export default {
       } else {
         this.loginMessage = '사용자 이름과 비밀번호를 입력해주세요!';
       }
+    },
+    toggleNav() {
+      this.isNavOpen = !this.isNavOpen;
+    },
+    closeNav() {
+      this.isNavOpen = false;
     }
   }
 }
@@ -130,6 +142,17 @@ nav {
   padding: 15px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin-top: 20px;
+  position: relative;
+}
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+.nav-links {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
@@ -163,8 +186,6 @@ nav a.router-link-active {
   background-color: #0056b3;
 }
 .mode-toggle, .login-btn {
-  margin-left: 20px;
-  padding: 8px 16px;
   background: #fff;
   color: #007bff;
   border: none;
@@ -248,12 +269,22 @@ nav a.router-link-active {
   opacity: 0;
 }
 @media (max-width: 600px) {
-  nav {
+  .hamburger {
+    display: block;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+  }
+  .nav-links {
+    display: none;
     flex-direction: column;
-    align-items: center;
+    width: 100%;
+  }
+  nav.open .nav-links {
+    display: flex;
   }
   nav a, nav button {
-    width: 80%;
+    width: 100%;
     text-align: center;
     margin: 5px 0;
   }
