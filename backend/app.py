@@ -5,6 +5,10 @@ import os
 app = Flask(__name__)
 CORS(app)
 
+@app.route('/')
+def hello():
+    return "Hello from Heroku!"
+
 @app.route('/api/features')
 def get_features():
     features = [
