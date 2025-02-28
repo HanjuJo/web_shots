@@ -130,15 +130,19 @@ nav {
   padding: 15px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
 }
-nav a {
+nav a, nav button {
   color: white;
   padding: 12px 24px;
   text-decoration: none;
   border-radius: 5px;
   transition: background 0.3s;
+  margin: 5px;
 }
-nav a:hover {
+nav a:hover, nav button:hover {
   background: rgba(255, 255, 255, 0.2);
 }
 nav a.router-link-active {
@@ -158,7 +162,7 @@ nav a.router-link-active {
 .download-btn:hover {
   background-color: #0056b3;
 }
-.mode-toggle {
+.mode-toggle, .login-btn {
   margin-left: 20px;
   padding: 8px 16px;
   background: #fff;
@@ -200,23 +204,6 @@ nav a.router-link-active {
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
-
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.5s;
-}
-.fade-enter, .fade-leave-to {
-  opacity: 0;
-}
-
-.login-btn {
-  margin-left: 20px;
-  padding: 8px 16px;
-  background: #fff;
-  color: #007bff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
 .modal {
   position: fixed;
   top: 0;
@@ -253,5 +240,22 @@ nav a.router-link-active {
 }
 .modal-content button:hover {
   background-color: #0056b3;
+}
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+@media (max-width: 600px) {
+  nav {
+    flex-direction: column;
+    align-items: center;
+  }
+  nav a, nav button {
+    width: 80%;
+    text-align: center;
+    margin: 5px 0;
+  }
 }
 </style>
