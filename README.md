@@ -33,3 +33,10 @@ Deployed at: [https://creatortool.netlify.app/](https://creatortool.netlify.app/
 # Web Shorts Grok3
 Frontend: [https://creatortool.netlify.app/](https://creatortool.netlify.app/)
 Backend: [https://creatortool-backend-123-c965e7aaa680.herokuapp.com/](https://creatortool-backend-123-c965e7aaa680.herokuapp.com/)
+
+# Web Shorts Grok3
+Frontend: [https://creatortool.netlify.app/](https://creatortool.netlify.app/)
+Backend: [https://creatortool-backend-123-c965e7aaa680.herokuapp.com/](https://creatortool-backend-123-c965e7aaa680.herokuapp.com/)
+Features:
+- YouTube Trends Dashboard
+- Channel Analysis Tool
