@@ -30,7 +30,13 @@
         </tbody>
       </table>
     </div>
-    <!-- 기존 모달 및 댓글 유지 -->
+    <div class="modal" v-if="showModalFlag">
+      <div class="modal-content">
+        <h3>{{ selectedFeature }}</h3>
+        <p>{{ getFeatureDescription(selectedIndex) }}</p>
+        <button @click="closeModal">닫기</button>
+      </div>
+    </div>
   </section>
 </template>
 
@@ -188,7 +194,6 @@ h2 {
 .modal-content button:hover {
   background-color: #0056b3;
 }
-
 .trends {
   margin-top: 40px;
 }

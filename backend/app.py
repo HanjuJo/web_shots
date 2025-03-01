@@ -4,8 +4,9 @@ import os
 import sqlite3
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": ["https://creatortool.netlify.app", "http://localhost:8081"]}})
 
+# DB 초기화는 남기되, emails 테이블 삭제는 생략
 def init_db():
     conn = sqlite3.connect('emails.db')
     c = conn.cursor()
@@ -13,7 +14,7 @@ def init_db():
     conn.commit()
     conn.close()
 
-init_db()
+init_db()  # 기존 데이터 남아있어도 문제없음
 
 @app.route('/')
 def hello():
@@ -37,40 +38,6 @@ def get_trends():
         {"title": "DIY 공예", "views": "600K"}
     ]
     return jsonify(trends)
-
-@app.route('/api/analyze', methods=['POST'])
-def analyze_channel():
-    url = request.json.get('url')
-    if url:
-        # 나중에 YouTube API로 대체
-        analysis = {
-            "keywords": ["트렌드", "숏츠", "AI"],
-            "hashtags": ["#Shorts", "#YouTube", "#Trend"],
-            "predicted_views": "500K"
-        }
-        return jsonify(analysis), 200
-    return jsonify({"message": "URL 필요!"}), 400
-
-@app.route('/api/emails', methods=['POST'])
-def save_email():
-    email = request.json.get('email')
-    if email:
-        conn = sqlite3.connect('emails.db')
-        c = conn.cursor()
-        c.execute("INSERT INTO emails (email) VALUES (?)", (email,))
-        conn.commit()
-        conn.close()
-        return jsonify({"message": "이메일 저장 성공!"}), 200
-    return jsonify({"message": "이메일 필요!"}), 400
-
-@app.route('/api/emails', methods=['GET'])
-def get_emails():
-    conn = sqlite3.connect('emails.db')
-    c = conn.cursor()
-    c.execute("SELECT email FROM emails")
-    emails = [row[0] for row in c.fetchall()]
-    conn.close()
-    return jsonify(emails)
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5001))
