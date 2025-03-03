@@ -10,31 +10,23 @@ import shutil
 from youtube_analyzer import YoutubeAnalyzer
 from ai_tools import AIToolkit
 from community import CommunityManager
-from youtube_service import YoutubeAnalyzer
 from services.trend_service import TrendService
 from services.tool_recommendation_service import ToolRecommendationService
 from services.api_integration_service import APIIntegrationService
 
 app = Flask(__name__)
-CORS(app, resources={
-    r"/api/*": {
-        "origins": ["http://localhost:8082", "http://127.0.0.1:8082"],
-        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization"]
-    }
-})
+CORS(app)
 
 # Load environment variables
 load_dotenv()
 
-# Initialize analyzers
+# Initialize services
 youtube_analyzer = YoutubeAnalyzer()
 ai_toolkit = AIToolkit()
 community_manager = CommunityManager()
 trend_service = TrendService(os.getenv('TWITTER_BEARER_TOKEN'))
 tool_service = ToolRecommendationService('data/ai_tools_db.json')
 api_service = APIIntegrationService()
-youtube_service = YoutubeAnalyzer()
 
 # 임시 디렉토리 생성
 TEMP_DIR = "temp_files"
@@ -556,7 +548,7 @@ def analyze_shorts():
         return jsonify({"error": "Keyword is required"}), 400
         
     try:
-        results = youtube_service.analyze_shorts(keyword, max_results)
+        results = youtube_analyzer.analyze_shorts(keyword, max_results)
         return jsonify(results)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -573,20 +565,17 @@ def analyze_videos():
         return jsonify({"error": "Keyword is required"}), 400
         
     try:
-        results = youtube_service.analyze_top_videos(keyword, max_results)
+        results = youtube_analyzer.analyze_top_videos(keyword, max_results)
         return jsonify(results)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 # 서버 종료 시 임시 파일 정리
-@app.teardown_appcontext
-def cleanup_temp_files(error):
-    try:
+def cleanup_temp_files(error=None):
+    if os.path.exists(TEMP_DIR):
         shutil.rmtree(TEMP_DIR)
-        os.makedirs(TEMP_DIR)
-    except Exception as e:
-        print(f"Error cleaning up temp files: {e}")
+    return error
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5003))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(host='0.0.0.0', port=port)
