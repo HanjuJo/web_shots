@@ -8,6 +8,14 @@ from collections import Counter
 import json
 import requests
 from bs4 import BeautifulSoup
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# Backend API URL
+BACKEND_URL = os.getenv('BACKEND_URL', 'https://creatortool-backend-123-c965e7aaa680.herokuapp.com')
 
 # 페이지 설정 및 스타일 적용
 st.set_page_config(
@@ -82,35 +90,20 @@ if 'page' not in st.session_state:
     st.session_state.page = "홈"
 
 def get_channel_info(channel_url):
-    ydl_opts = {
-        'extract_flat': True,
-        'force_generic_extractor': True,
-        'quiet': True
-    }
-    
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        try:
-            result = ydl.extract_info(channel_url, download=False)
-            return result
-        except Exception as e:
-            st.error(f"채널 정보를 가져오는데 실패했습니다: {str(e)}")
-            return None
+    response = requests.get(f"{BACKEND_URL}/channel-info", params={"channel_url": channel_url})
+    if response.status_code == 200:
+        return response.json()
+    else:
+        st.error(f"채널 정보를 가져오는데 실패했습니다: {response.text}")
+        return None
 
 def get_video_info(video_url):
-    ydl_opts = {
-        'quiet': True,
-        'extract_flat': False,
-        'writesubtitles': True,
-        'writeautomaticsub': True
-    }
-    
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        try:
-            result = ydl.extract_info(video_url, download=False)
-            return result
-        except Exception as e:
-            st.error(f"비디오 정보를 가져오는데 실패했습니다: {str(e)}")
-            return None
+    response = requests.get(f"{BACKEND_URL}/video-info", params={"video_url": video_url})
+    if response.status_code == 200:
+        return response.json()
+    else:
+        st.error(f"비디오 정보를 가져오는데 실패했습니다: {response.text}")
+        return None
 
 def show_home():
     st.title("YouTube 크리에이터를 위한 올인원 분석 도구")

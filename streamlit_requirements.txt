@@ -1,0 +1,10 @@
+streamlit==1.42.2
+yt-dlp==2025.2.19
+beautifulsoup4==4.12.3
+requests==2.31.0
+plotly==6.0.0
+pandas==2.2.3
+openai==1.13.3
+python-twitter-v2==0.8.1
+pillow==10.1.0
+python-dotenv==1.0.1
