@@ -33,3 +33,4 @@ openai-whisper>=20231117
 nltk>=3.8.1
 textblob>=0.17.1
 scikit-learn>=1.4.1.post1
+tweepy>=4.14.0
