@@ -1,0 +1,442 @@
+/* 전체 테마 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+:root {
+    /* 메인 컬러 */
+    --youtube-red: #FF0000;
+    --youtube-dark: #282828;
+    --youtube-black: #0F0F0F;
+    
+    /* 배경 컬러 */
+    --bg-primary: #0F0F0F;
+    --bg-secondary: #1F1F1F;
+    --bg-tertiary: #282828;
+    
+    /* 텍스트 컬러 */
+    --text-primary: #FFFFFF;
+    --text-secondary: #AAAAAA;
+    --text-tertiary: #717171;
+    
+    /* 액센트 컬러 */
+    --accent-blue: #3EA6FF;
+    --accent-red: #FF4E45;
+    --accent-green: #2BA640;
+    
+    /* 보더 & 쉐도우 */
+    --border-color: #303030;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.2);
+    --shadow-md: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+/* 기본 스타일 */
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+/* 스트림릿 기본 오버라이드 */
+.stApp {
+    background-color: var(--bg-primary);
+}
+
+/* 헤더 스타일 */
+.stApp header {
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+}
+
+/* 사이드바 스타일 */
+.sidebar .sidebar-content {
+    background-color: var(--bg-secondary);
+    padding: 2rem 1rem;
+    color: var(--text-primary);
+    border-right: 1px solid var(--border-color);
+    max-height: 100vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) var(--bg-secondary);
+}
+
+.sidebar .sidebar-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar .sidebar-content::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+.sidebar .sidebar-content::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 3px;
+}
+
+.sidebar .sidebar-content .block-container {
+    margin-top: 2rem;
+}
+
+/* 네비게이션 스타일 */
+.sidebar button[key^="nav_"] {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 4px 0;
+    width: 100%;
+    text-align: left;
+    transition: all 0.2s ease;
+}
+
+.sidebar button[key^="nav_"]:hover {
+    background-color: var(--youtube-red);
+    border-color: var(--youtube-red);
+    transform: translateX(5px);
+}
+
+.sidebar button[key^="nav_"].active {
+    background-color: var(--youtube-red);
+    border-color: var(--youtube-red);
+}
+
+/* 광고 컨테이너 스타일 */
+.ad-container {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    margin: 16px 0;
+    transition: all 0.2s ease;
+}
+
+.ad-container:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.ad-container h4 {
+    color: var(--text-primary);
+    margin: 0 0 12px 0;
+    font-size: 16px;
+}
+
+.ad-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.ad-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.ad-content img {
+    width: 100%;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.ad-content p {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* 구분선 스타일 */
+.sidebar hr {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 24px 0;
+}
+
+/* AdSense 반응형 스타일 */
+.adsbygoogle {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+    display: block;
+}
+
+/* 메인 컨텐츠 스타일 */
+.main .block-container {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* 카드 스타일 */
+.stMarkdown div {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: 12px;
+}
+
+/* 버튼 스타일 */
+.stButton button {
+    background-color: var(--youtube-red);
+    color: var(--text-primary);
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.stButton button:hover {
+    background-color: var(--accent-red);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* 입력 필드 스타일 */
+.stTextInput input, .stTextArea textarea {
+    background-color: var(--bg-tertiary);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.stTextInput input:focus, .stTextArea textarea:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
+}
+
+.stTextInput input::placeholder, .stTextArea textarea::placeholder {
+    color: var(--text-tertiary);
+}
+
+/* 메트릭 카드 스타일 */
+.stMetric {
+    background: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.stMetric .metric-value {
+    color: var(--accent-blue);
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.stMetric .metric-label {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+}
+
+/* 데이터프레임 스타일 */
+.dataframe {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.dataframe th {
+    background-color: #F8FAFC;
+    color: var(--text-secondary);
+    font-weight: 600;
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.dataframe td {
+    padding: 1rem;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dataframe tr:hover {
+    background-color: #F8FAFC;
+}
+
+/* 탭 스타일 */
+.stTabs {
+    background: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.stTabs [data-baseweb="tab"] {
+    color: var(--text-secondary);
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+}
+
+.stTabs [data-baseweb="tab"][aria-selected="true"] {
+    color: var(--accent-blue);
+    border-bottom: 2px solid var(--accent-blue);
+}
+
+/* 선택 필드 스타일 */
+.stSelectbox select {
+    background-color: var(--bg-tertiary);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.stSelectbox select:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
+}
+
+/* 알림 스타일 */
+.stAlert {
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin: 1rem 0;
+    color: var(--text-primary);
+    border: 1px solid transparent;
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+    box-shadow: var(--shadow-sm);
+}
+
+/* 진행 바 스타일 */
+.stProgress {
+    height: 6px;
+    border-radius: 3px;
+    background-color: #E5E9F0;
+}
+
+.stProgress > div {
+    background-color: var(--youtube-red);
+    border-radius: 3px;
+}
+
+/* 로딩 스피너 스타일 */
+.stSpinner {
+    border-color: var(--primary-color);
+    border-right-color: transparent;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .main .block-container {
+        padding: 1rem;
+    }
+    
+    .stMarkdown div,
+    .stMetric,
+    .stPlot,
+    .stDataFrame,
+    .stTabs {
+        padding: 1rem;
+    }
+    
+    .stMetric .metric-value {
+        font-size: 1.5rem;
+    }
+}
+
+/* 애니메이션 효과 */
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(10px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+.stMarkdown div,
+.stMetric,
+.stPlot,
+.stDataFrame,
+.stTabs {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* 링크 스타일 */
+a {
+    color: var(--accent-blue);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* 체크박스 스타일 */
+.stCheckbox label {
+    color: var(--text-primary);
+}
+
+/* 라디오 버튼 스타일 */
+.stRadio label {
+    color: var(--text-primary);
+}
+
+/* 슬라이더 스타일 */
+.stSlider div[data-baseweb="slider"] {
+    background-color: var(--bg-tertiary);
+}
+
+.stSlider [role="slider"] {
+    background-color: var(--accent-blue);
+}
+
+/* 코드 블록 스타일 */
+.stCodeBlock {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+/* 마크다운 스타일 */
+.stMarkdown {
+    color: var(--text-primary);
+}
+
+.stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
+    color: var(--text-primary);
+}
+
+.stMarkdown p {
+    color: var(--text-secondary);
+}
+
+/* 툴팁 스타일 */
+[data-baseweb="tooltip"] {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+/* 차트 스타일 */
+.stPlot, .stDataFrame {
+    background: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
