@@ -1,141 +1,141 @@
-&lt;template>
-  &lt;div class="premium">
-    &lt;div class="premium-header">
-      &lt;h1>프리미엄 멤버십&lt;/h1>
-      &lt;p>더 많은 기능과 혜택을 누려보세요&lt;/p>
-    &lt;/div>
+<template>
+  <div class="premium">
+    <div class="premium-header">
+      <h1>프리미엄 멤버십</h1>
+      <p>더 많은 기능과 혜택을 누려보세요</p>
+    </div>
 
-    &lt;div class="pricing-toggle">
-      &lt;span :class="{ active: !isAnnual }">월간&lt;/span>
-      &lt;label class="switch">
-        &lt;input type="checkbox" v-model="isAnnual">
-        &lt;span class="slider">&lt;/span>
-      &lt;/label>
-      &lt;span :class="{ active: isAnnual }">연간&lt;/span>
-      &lt;div class="savings" v-if="isAnnual">20% 할인&lt;/div>
-    &lt;/div>
+    <div class="pricing-toggle">
+      <span :class="{ active: !isAnnual }">월간</span>
+      <label class="switch">
+        <input type="checkbox" v-model="isAnnual">
+        <span class="slider"></span>
+      </label>
+      <span :class="{ active: isAnnual }">연간</span>
+      <div class="savings" v-if="isAnnual">20% 할인</div>
+    </div>
 
-    &lt;div class="pricing-plans">
-      &lt;div class="plan-card basic">
-        &lt;div class="plan-header">
-          &lt;h3>베이직&lt;/h3>
-          &lt;p>AI 도구를 처음 시작하는 분들을 위한 플랜&lt;/p>
-          &lt;div class="price">
-            &lt;span class="amount">무료&lt;/span>
-          &lt;/div>
-        &lt;/div>
-        &lt;ul class="features">
-          &lt;li>
-            &lt;i class="fas fa-check">&lt;/i>
+    <div class="pricing-plans">
+      <div class="plan-card basic">
+        <div class="plan-header">
+          <h3>베이직</h3>
+          <p>AI 도구를 처음 시작하는 분들을 위한 플랜</p>
+          <div class="price">
+            <span class="amount">무료</span>
+          </div>
+        </div>
+        <ul class="features">
+          <li>
+            <i class="fas fa-check"></i>
             기본 AI 도구 사용
-          &lt;/li>
-          &lt;li>
-            &lt;i class="fas fa-check">&lt;/i>
+          </li>
+          <li>
+            <i class="fas fa-check"></i>
             커뮤니티 접근
-          &lt;/li>
-          &lt;li>
-            &lt;i class="fas fa-check">&lt;/i>
+          </li>
+          <li>
+            <i class="fas fa-check"></i>
             기본 분석 리포트
-          &lt;/li>
-        &lt;/ul>
-        &lt;button class="btn-secondary">현재 플랜&lt;/button>
-      &lt;/div>
+          </li>
+        </ul>
+        <button class="btn-secondary">현재 플랜</button>
+      </div>
 
-      &lt;div class="plan-card pro">
-        &lt;div class="popular-badge">인기&lt;/div>
-        &lt;div class="plan-header">
-          &lt;h3>프로&lt;/h3>
-          &lt;p>전문 크리에이터를 위한 고급 기능&lt;/p>
-          &lt;div class="price">
-            &lt;span class="currency">₩&lt;/span>
-            &lt;span class="amount">{{ isAnnual ? '29,900' : '39,900' }}&lt;/span>
-            &lt;span class="period">/월&lt;/span>
-          &lt;/div>
-          &lt;div class="price-note" v-if="isAnnual">연간 결제 시&lt;/div>
-        &lt;/div>
-        &lt;ul class="features">
-          &lt;li>
-            &lt;i class="fas fa-check">&lt;/i>
+      <div class="plan-card pro">
+        <div class="popular-badge">인기</div>
+        <div class="plan-header">
+          <h3>프로</h3>
+          <p>전문 크리에이터를 위한 고급 기능</p>
+          <div class="price">
+            <span class="currency">₩</span>
+            <span class="amount">{{ isAnnual ? '29,900' : '39,900' }}</span>
+            <span class="period">/월</span>
+          </div>
+          <div class="price-note" v-if="isAnnual">연간 결제 시</div>
+        </div>
+        <ul class="features">
+          <li>
+            <i class="fas fa-check"></i>
             베이직의 모든 기능 포함
-          &lt;/li>
-          &lt;li>
-            &lt;i class="fas fa-check">&lt;/i>
+          </li>
+          <li>
+            <i class="fas fa-check"></i>
             고급 AI 도구 무제한 사용
-          &lt;/li>
-          &lt;li>
-            &lt;i class="fas fa-check">&lt;/i>
+          </li>
+          <li>
+            <i class="fas fa-check"></i>
             우선순위 처리
-          &lt;/li>
-          &lt;li>
-            &lt;i class="fas fa-check">&lt;/i>
+          </li>
+          <li>
+            <i class="fas fa-check"></i>
             상세 분석 리포트
-          &lt;/li>
-          &lt;li>
-            &lt;i class="fas fa-check">&lt;/i>
+          </li>
+          <li>
+            <i class="fas fa-check"></i>
             이메일 지원
-          &lt;/li>
-        &lt;/ul>
-        &lt;button class="btn-primary">시작하기&lt;/button>
-      &lt;/div>
+          </li>
+        </ul>
+        <button class="btn-primary">시작하기</button>
+      </div>
 
-      &lt;div class="plan-card enterprise">
-        &lt;div class="plan-header">
-          &lt;h3>엔터프라이즈&lt;/h3>
-          &lt;p>대규모 팀과 기업을 위한 맞춤형 솔루션&lt;/p>
-          &lt;div class="price">
-            &lt;span class="amount">문의&lt;/span>
-          &lt;/div>
-        &lt;/div>
-        &lt;ul class="features">
-          &lt;li>
-            &lt;i class="fas fa-check">&lt;/i>
+      <div class="plan-card enterprise">
+        <div class="plan-header">
+          <h3>엔터프라이즈</h3>
+          <p>대규모 팀과 기업을 위한 맞춤형 솔루션</p>
+          <div class="price">
+            <span class="amount">문의</span>
+          </div>
+        </div>
+        <ul class="features">
+          <li>
+            <i class="fas fa-check"></i>
             프로의 모든 기능 포함
-          &lt;/li>
-          &lt;li>
-            &lt;i class="fas fa-check">&lt;/i>
+          </li>
+          <li>
+            <i class="fas fa-check"></i>
             맞춤형 AI 모델 학습
-          &lt;/li>
-          &lt;li>
-            &lt;i class="fas fa-check">&lt;/i>
+          </li>
+          <li>
+            <i class="fas fa-check"></i>
             API 액세스
-          &lt;/li>
-          &lt;li>
-            &lt;i class="fas fa-check">&lt;/i>
+          </li>
+          <li>
+            <i class="fas fa-check"></i>
             전담 매니저
-          &lt;/li>
-          &lt;li>
-            &lt;i class="fas fa-check">&lt;/i>
+          </li>
+          <li>
+            <i class="fas fa-check"></i>
             SLA 보장
-          &lt;/li>
-        &lt;/ul>
-        &lt;button class="btn-outline">문의하기&lt;/button>
-      &lt;/div>
-    &lt;/div>
+          </li>
+        </ul>
+        <button class="btn-outline">문의하기</button>
+      </div>
+    </div>
 
-    &lt;div class="faq-section">
-      &lt;h2>자주 묻는 질문&lt;/h2>
-      &lt;div class="faq-grid">
-        &lt;div 
+    <div class="faq-section">
+      <h2>자주 묻는 질문</h2>
+      <div class="faq-grid">
+        <div 
           v-for="(faq, index) in faqs" 
           :key="index"
           class="faq-item"
           :class="{ active: faq.isOpen }"
           @click="toggleFaq(index)"
         >
-          &lt;div class="faq-header">
-            &lt;h3>{{ faq.question }}&lt;/h3>
-            &lt;i class="fas" :class="faq.isOpen ? 'fa-minus' : 'fa-plus'">&lt;/i>
-          &lt;/div>
-          &lt;div class="faq-content" v-show="faq.isOpen">
-            &lt;p>{{ faq.answer }}&lt;/p>
-          &lt;/div>
-        &lt;/div>
-      &lt;/div>
-    &lt;/div>
-  &lt;/div>
-&lt;/template>
+          <div class="faq-header">
+            <h3>{{ faq.question }}</h3>
+            <i class="fas" :class="faq.isOpen ? 'fa-minus' : 'fa-plus'"></i>
+          </div>
+          <div class="faq-content" v-show="faq.isOpen">
+            <p>{{ faq.answer }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 
-&lt;script>
+<script>
 export default {
   name: 'PremiumView',
   data() {
@@ -171,9 +171,9 @@ export default {
     }
   }
 }
-&lt;/script>
+</script>
 
-&lt;style scoped>
+<style scoped>
 .premium {
   max-width: 1200px;
   margin: 0 auto;
@@ -467,4 +467,4 @@ button {
     padding: 1.5rem;
   }
 }
-&lt;/style>
+</style>

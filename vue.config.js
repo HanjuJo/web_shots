@@ -1,6 +1,7 @@
 const { defineConfig } = require('@vue/cli-service')
 
 module.exports = defineConfig({
+  publicPath: process.env.NODE_ENV === 'production' ? '/' : '/',
   transpileDependencies: true,
   devServer: {
     host: 'localhost',
@@ -28,6 +29,11 @@ module.exports = defineConfig({
     devtool: 'source-map',
     performance: {
       hints: false
+    },
+    resolve: {
+      alias: {
+        vue$: '@vue/compat'
+      }
     }
   }
 })

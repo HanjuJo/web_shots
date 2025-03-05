@@ -1,77 +1,77 @@
-&lt;template>
-  &lt;div class="channel-view">
-    &lt;h1>채널 분석&lt;/h1>
+<template>
+  <div class="channel-view">
+    <h1>채널 분석</h1>
 
-    &lt;div class="search-box">
-      &lt;input 
+    <div class="search-box">
+      <input 
         v-model="channelId"
         @keyup.enter="handleAnalyze"
         placeholder="채널 ID를 입력하세요"
         type="text"
       >
-      &lt;button @click="handleAnalyze" :disabled="!channelId || loading">
+      <button @click="handleAnalyze" :disabled="!channelId || loading">
         분석하기
-      &lt;/button>
-    &lt;/div>
+      </button>
+    </div>
 
-    &lt;div v-if="loading" class="loading">
+    <div v-if="loading" class="loading">
       채널을 분석하는 중...
-    &lt;/div>
+    </div>
 
-    &lt;div v-else-if="error" class="error">
+    <div v-else-if="error" class="error">
       {{ error }}
-    &lt;/div>
+    </div>
 
-    &lt;div v-else-if="channelStats" class="channel-stats">
-      &lt;div class="stats-card">
-        &lt;div class="channel-header">
-          &lt;img :src="channelStats.thumbnail_url" :alt="channelStats.title" class="channel-avatar">
-          &lt;div class="channel-info">
-            &lt;h2>{{ channelStats.title }}&lt;/h2>
-            &lt;p>{{ channelStats.description }}&lt;/p>
-          &lt;/div>
-        &lt;/div>
+    <div v-else-if="channelStats" class="channel-content">
+      <div class="channel-header">
+        <h1>채널 관리</h1>
+      </div>
+      
+      <div class="channel-stats">
+        <div class="stat-card">
+          <h3>구독자</h3>
+          <p class="stat-value">{{ formatNumber(channelStats.subscriber_count) }}</p>
+        </div>
+        <div class="stat-card">
+          <h3>총 조회수</h3>
+          <p class="stat-value">{{ formatNumber(channelStats.view_count) }}</p>
+        </div>
+        <div class="stat-card">
+          <h3>동영상</h3>
+          <p class="stat-value">{{ formatNumber(channelStats.video_count) }}</p>
+        </div>
+      </div>
+      
+      <div class="channel-actions">
+        <button class="btn btn-primary" @click="handleAnalyze">
+          <i class="fas fa-sync"></i> 새로고침
+        </button>
+        <button class="btn btn-outline-primary">
+          <i class="fas fa-cog"></i> 설정
+        </button>
+      </div>
+      
+      <div class="recent-videos">
+        <h3>최근 업로드된 동영상</h3>
+        <div class="video-grid">
+          <div v-for="video in channelStats.recent_videos" :key="video.id" class="video-card">
+            <img :src="video.thumbnail_url" :alt="video.title" class="thumbnail">
+            <div class="video-info">
+              <h4>{{ video.title }}</h4>
+              <div class="video-stats">
+                <span><i class="fas fa-eye"></i> {{ formatNumber(video.view_count) }}</span>
+                <span><i class="fas fa-thumbs-up"></i> {{ formatNumber(video.like_count) }}</span>
+                <span><i class="fas fa-comment"></i> {{ formatNumber(video.comment_count) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 
-        &lt;div class="stats-grid">
-          &lt;div class="stat-item">
-            &lt;i class="fas fa-users">&lt;/i>
-            &lt;span class="stat-value">{{ formatNumber(channelStats.subscriber_count) }}&lt;/span>
-            &lt;span class="stat-label">구독자&lt;/span>
-          &lt;/div>
-          &lt;div class="stat-item">
-            &lt;i class="fas fa-eye">&lt;/i>
-            &lt;span class="stat-value">{{ formatNumber(channelStats.view_count) }}&lt;/span>
-            &lt;span class="stat-label">총 조회수&lt;/span>
-          &lt;/div>
-          &lt;div class="stat-item">
-            &lt;i class="fas fa-video">&lt;/i>
-            &lt;span class="stat-value">{{ formatNumber(channelStats.video_count) }}&lt;/span>
-            &lt;span class="stat-label">동영상&lt;/span>
-          &lt;/div>
-        &lt;/div>
-      &lt;/div>
-
-      &lt;div class="recent-videos">
-        &lt;h3>최근 업로드된 동영상&lt;/h3>
-        &lt;div class="video-grid">
-          &lt;div v-for="video in channelStats.recent_videos" :key="video.id" class="video-card">
-            &lt;img :src="video.thumbnail_url" :alt="video.title" class="thumbnail">
-            &lt;div class="video-info">
-              &lt;h4>{{ video.title }}&lt;/h4>
-              &lt;div class="video-stats">
-                &lt;span>&lt;i class="fas fa-eye">&lt;/i> {{ formatNumber(video.view_count) }}&lt;/span>
-                &lt;span>&lt;i class="fas fa-thumbs-up">&lt;/i> {{ formatNumber(video.like_count) }}&lt;/span>
-                &lt;span>&lt;i class="fas fa-comment">&lt;/i> {{ formatNumber(video.comment_count) }}&lt;/span>
-              &lt;/div>
-            &lt;/div>
-          &lt;/div>
-        &lt;/div>
-      &lt;/div>
-    &lt;/div>
-  &lt;/div>
-&lt;/template>
-
-&lt;script>
+<script>
 import { mapState, mapActions } from 'vuex'
 
 export default {
@@ -100,9 +100,9 @@ export default {
     console.log('ChannelView mounted')
   }
 }
-&lt;/script>
+</script>
 
-&lt;style scoped>
+<style scoped>
 .channel-view {
   padding: 20px;
 }
@@ -151,69 +151,37 @@ export default {
   color: #dc3545;
 }
 
-.channel-stats {
+.channel-content {
   margin-top: 20px;
-}
-
-.stats-card {
-  background: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .channel-header {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
-.channel-avatar {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.channel-info h2 {
-  margin: 0 0 10px 0;
-}
-
-.channel-info p {
-  color: #666;
-  margin: 0;
-  line-height: 1.4;
-}
-
-.stats-grid {
+.channel-stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
-  margin-top: 20px;
+  margin-bottom: 30px;
 }
 
-.stat-item {
-  text-align: center;
+.stat-card {
+  background: white;
   padding: 20px;
-  background: #f8f9fa;
   border-radius: 8px;
-}
-
-.stat-item i {
-  font-size: 24px;
-  color: #1a73e8;
-  margin-bottom: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .stat-value {
-  display: block;
   font-size: 24px;
   font-weight: bold;
   margin: 10px 0;
 }
 
-.stat-label {
-  color: #666;
+.channel-actions {
+  display: flex;
+  gap: 10px;
 }
 
 .recent-videos {
@@ -273,4 +241,4 @@ export default {
 .video-stats i {
   margin-right: 4px;
 }
-&lt;/style>
+</style>

@@ -1,100 +1,47 @@
 <template>
   <div class="home">
+    <div class="background-pattern"></div>
+    
     <!-- Hero Section -->
-    <section class="hero bg-primary text-white py-5">
+    <section class="hero">
       <div class="container">
-        <div class="row align-items-center">
-          <div class="col-lg-6">
-            <h1 class="display-4 mb-4">AI 크리에이터 도구</h1>
-            <p class="lead mb-4">
-              최신 AI 도구들을 활용하여 더 나은 콘텐츠를 제작하세요.
-              유튜브 채널 분석, 트렌드 파악, 커뮤니티 참여까지 한 곳에서!
-            </p>
-            <router-link to="/tools" class="btn btn-light btn-lg me-3">
-              AI 도구 살펴보기
-            </router-link>
-            <router-link to="/youtube-analytics" class="btn btn-outline-light btn-lg">
-              채널 분석하기
-            </router-link>
-          </div>
-          <div class="col-lg-6">
-            <img src="@/assets/hero-image.png" alt="AI Creator Tool" class="img-fluid">
-          </div>
-        </div>
+        <h1>AI로 시작하는 새로운 창작</h1>
+        <p>무료로 사용할 수 있는 최고의 AI 도구들을 만나보세요</p>
       </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="features py-5">
+    <!-- AI Tools Section -->
+    <section class="ai-tools">
       <div class="container">
-        <h2 class="text-center mb-5">주요 기능</h2>
+        <h2 class="text-center mb-4">무료로 시작하는 AI 도구</h2>
+        <p class="text-center text-muted mb-5">인기 있는 무료 AI 도구들을 바로 사용해보세요!</p>
+        
         <div class="row g-4">
-          <div class="col-md-4">
+          <div v-for="tool in aiTools" :key="tool.id" class="col-md-4">
             <div class="card h-100">
-              <div class="card-body text-center">
-                <i class="fas fa-tools fa-3x text-primary mb-3"></i>
-                <h3 class="card-title">AI 도구</h3>
-                <p class="card-text">
-                  Midjourney, ChatGPT, Runway 등 다양한 AI 도구들을 
-                  한눈에 비교하고 선택하세요.
-                </p>
-                <router-link to="/tools" class="btn btn-outline-primary mt-3">
-                  더 알아보기
-                </router-link>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="card h-100">
-              <div class="card-body text-center">
-                <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
-                <h3 class="card-title">채널 분석</h3>
-                <p class="card-text">
-                  유튜브 채널을 분석하여 성장 전략을 제시하고
-                  트렌드를 파악하세요.
-                </p>
-                <router-link to="/youtube-analytics" class="btn btn-outline-primary mt-3">
-                  분석하기
-                </router-link>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="card h-100">
-              <div class="card-body text-center">
-                <i class="fas fa-users fa-3x text-primary mb-3"></i>
-                <h3 class="card-title">커뮤니티</h3>
-                <p class="card-text">
-                  다른 크리에이터들과 경험을 공유하고
-                  함께 성장하세요.
-                </p>
-                <router-link to="/community" class="btn btn-outline-primary mt-3">
-                  참여하기
-                </router-link>
+              <div class="card-body position-relative">
+                <div class="tool-icon">
+                  <i :class="tool.icon"></i>
+                </div>
+                <div class="decorative-circle"></div>
+                <div class="decorative-dots"></div>
+                <h5 class="card-title">{{ tool.title }}</h5>
+                <p class="card-text">{{ tool.description }}</p>
+                <a :href="tool.url" target="_blank" class="btn btn-primary stretched-link">
+                  도구 사용하기
+                  <i class="fas fa-arrow-right ms-2"></i>
+                </a>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- Tutorial Section -->
-    <section class="tutorials bg-light py-5">
-      <div class="container">
-        <h2 class="text-center mb-5">인기 튜토리얼</h2>
-        <div class="row g-4">
-          <div class="col-md-4" v-for="tutorial in tutorials" :key="tutorial.id">
-            <div class="card h-100">
-              <img :src="tutorial.thumbnail" class="card-img-top" :alt="tutorial.title">
-              <div class="card-body">
-                <h5 class="card-title">{{ tutorial.title }}</h5>
-                <p class="card-text">{{ tutorial.description }}</p>
-                <router-link :to="'/tutorials/' + tutorial.id" class="btn btn-primary">
-                  보러가기
-                </router-link>
-              </div>
-            </div>
-          </div>
+        
+        <!-- 더보기 버튼 -->
+        <div class="text-center mt-5">
+          <router-link to="/tools" class="btn btn-outline-primary btn-lg px-5">
+            더 많은 AI 도구 보기
+            <i class="fas fa-arrow-right ms-2"></i>
+          </router-link>
         </div>
       </div>
     </section>
@@ -106,24 +53,69 @@ export default {
   name: 'HomePage',
   data() {
     return {
-      tutorials: [
+      aiTools: [
         {
           id: 1,
-          title: 'Midjourney 마스터하기',
-          description: 'Midjourney로 전문가급 이미지 생성하는 방법',
-          thumbnail: require('@/assets/tool-1.jpg')
+          title: 'ChatGPT',
+          description: '자연어 처리 AI로 대화하고 텍스트를 생성하세요',
+          url: 'https://chat.openai.com',
+          icon: 'fas fa-comments'
         },
         {
           id: 2,
-          title: 'ChatGPT 프롬프트 최적화',
-          description: '더 나은 결과를 위한 프롬프트 작성법',
-          thumbnail: require('@/assets/tool-2.jpg')
+          title: 'Midjourney',
+          description: 'AI로 놀라운 이미지와 아트워크를 생성하세요',
+          url: 'https://www.midjourney.com',
+          icon: 'fas fa-paint-brush'
         },
         {
           id: 3,
-          title: 'Runway 영상 편집 기초',
-          description: 'AI로 영상 편집 시작하기',
-          thumbnail: require('@/assets/tool-3.jpg')
+          title: 'Claude',
+          description: '지능형 AI 어시스턴트로 작업을 자동화하세요',
+          url: 'https://claude.ai',
+          icon: 'fas fa-robot'
+        },
+        {
+          id: 4,
+          title: 'Leonardo.ai',
+          description: 'AI로 게임 아트와 캐릭터를 디자인하세요',
+          url: 'https://leonardo.ai',
+          icon: 'fas fa-gamepad'
+        },
+        {
+          id: 5,
+          title: 'Runway',
+          description: 'AI로 비디오 편집과 특수효과를 만드세요',
+          url: 'https://runway.ml',
+          icon: 'fas fa-film'
+        },
+        {
+          id: 6,
+          title: 'Stable Diffusion',
+          description: '오픈소스 AI로 이미지를 생성하고 편집하세요',
+          url: 'https://stability.ai',
+          icon: 'fas fa-image'
+        },
+        {
+          id: 7,
+          title: 'Gamma',
+          description: 'AI로 전문적인 프레젠테이션을 만드세요',
+          url: 'https://gamma.app',
+          icon: 'fas fa-presentation'
+        },
+        {
+          id: 8,
+          title: 'Firefly',
+          description: 'Adobe의 AI로 창의적인 작업을 하세요',
+          url: 'https://firefly.adobe.com',
+          icon: 'fas fa-wand-magic-sparkles'
+        },
+        {
+          id: 9,
+          title: 'Synthesia',
+          description: 'AI로 전문적인 비디오를 제작하세요',
+          url: 'https://www.synthesia.io',
+          icon: 'fas fa-video'
         }
       ]
     }
@@ -132,28 +124,183 @@ export default {
 </script>
 
 <style scoped>
+.home {
+  position: relative;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  overflow: hidden;
+}
+
+.background-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.05;
+  background-image: 
+    radial-gradient(circle at 25px 25px, #000 2%, transparent 2%),
+    radial-gradient(circle at 75px 75px, #000 2%, transparent 2%);
+  background-size: 100px 100px;
+  pointer-events: none;
+}
+
+.card {
+  transition: all 0.3s ease;
+  border: none;
+  background: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+  padding: 2rem;
+  z-index: 1;
+}
+
+.tool-icon {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border-radius: 20px;
+  transform: rotate(45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tool-icon i {
+  transform: rotate(-45deg);
+  font-size: 1.8rem;
+  color: white;
+}
+
+.decorative-circle {
+  position: absolute;
+  bottom: -50px;
+  left: -50px;
+  width: 150px;
+  height: 150px;
+  background: linear-gradient(45deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+  border-radius: 50%;
+  z-index: -1;
+}
+
+.decorative-dots {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 60px;
+  height: 60px;
+  background-image: 
+    radial-gradient(circle at 6px 6px, #6366f1 3px, transparent 3px);
+  background-size: 15px 15px;
+  opacity: 0.2;
+  z-index: -1;
+}
+
+.card-title {
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.card-text {
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+/* Hero Section */
 .hero {
-  background: linear-gradient(45deg, #4a90e2, #63b3ed);
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border-radius: 1rem;
+  margin-bottom: 4rem;
+  color: white;
 }
 
-.features .card {
-  transition: transform 0.2s;
+.hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
 }
 
-.features .card:hover {
-  transform: translateY(-5px);
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
 }
 
-.tutorials .card {
-  transition: transform 0.2s;
+.hero p {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  opacity: 0.9;
 }
 
-.tutorials .card:hover {
-  transform: translateY(-5px);
+/* Sections */
+section {
+  margin-bottom: 4rem;
 }
 
-.card-img-top {
-  height: 200px;
-  object-fit: cover;
+h2 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #1f2937;
+}
+
+.section-desc {
+  text-align: center;
+  color: #6b7280;
+  font-size: 1.125rem;
+  margin-bottom: 3rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .home {
+    padding: 1rem;
+  }
+
+  .hero {
+    padding: 3rem 1rem;
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero p {
+    font-size: 1.125rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
 }
 </style>

@@ -264,43 +264,32 @@
 </template>
 
 <script>
-import { Modal } from 'bootstrap'
-import axios from 'axios'
-
 export default {
-  name: 'CommunityPost',
+  name: 'CommunityPostView',
   data() {
     return {
       post: {
-        id: null,
         title: '',
         content: '',
         category: '',
-        author: {
-          id: null,
-          username: '',
-          avatar: ''
-        },
         created_at: '',
         view_count: 0,
         like_count: 0,
         comment_count: 0,
         is_liked: false,
-        tags: [],
+        author: {
+          username: '',
+          avatar: ''
+        },
         images: [],
+        tags: [],
         comments: []
       },
       newComment: {
         content: ''
       },
-      editingComment: {
-        id: null,
-        content: ''
-      },
-      selectedImage: '',
-      loadingComments: false,
-      hasMoreComments: false,
-      currentPage: 1
+      selectedImage: null,
+      showMenu: false
     }
   },
   computed: {
@@ -311,157 +300,39 @@ export default {
   methods: {
     async fetchPost() {
       try {
-        const response = await axios.get(`/api/posts/${this.$route.params.id}`, {
-          params: {
-            user_id: this.$store.state.user.id
-          }
-        })
+        const response = await this.$axios.get(`/posts/${this.$route.params.id}`)
         this.post = response.data
       } catch (error) {
-        console.error('게시글 로드 실패:', error)
-        this.$router.push('/community')
+        console.error('게시글을 불러오는데 실패했습니다:', error)
       }
     },
-
     async toggleLike() {
       try {
-        const response = await axios.post(`/api/posts/${this.post.id}/like`, {
-          user_id: this.$store.state.user.id
-        })
+        const response = await this.$axios.post(`/posts/${this.post.id}/like`)
         this.post.is_liked = response.data.is_liked
         this.post.like_count = response.data.like_count
       } catch (error) {
-        console.error('좋아요 토글 실패:', error)
+        console.error('좋아요 처리에 실패했습니다:', error)
       }
     },
-
     async submitComment() {
       try {
-        const response = await axios.post(`/api/posts/${this.post.id}/comments`, {
-          user_id: this.$store.state.user.id,
-          content: this.newComment.content
-        })
+        const response = await this.$axios.post(`/posts/${this.post.id}/comments`, this.newComment)
         this.post.comments.unshift(response.data)
         this.post.comment_count++
         this.newComment.content = ''
       } catch (error) {
-        console.error('댓글 작성 실패:', error)
+        console.error('댓글 작성에 실패했습니다:', error)
       }
     },
-
-    async toggleCommentLike(comment) {
-      try {
-        const response = await axios.post(`/api/comments/${comment.id}/like`, {
-          user_id: this.$store.state.user.id
-        })
-        comment.is_liked = response.data.is_liked
-        comment.like_count = response.data.like_count
-      } catch (error) {
-        console.error('댓글 좋아요 토글 실패:', error)
-      }
-    },
-
-    editComment(comment) {
-      this.editingComment = { ...comment }
-      new Modal(document.getElementById('editCommentModal')).show()
-    },
-
-    async updateComment() {
-      try {
-        const response = await axios.put(`/api/comments/${this.editingComment.id}`, {
-          content: this.editingComment.content
-        })
-        const index = this.post.comments.findIndex(c => c.id === this.editingComment.id)
-        if (index !== -1) {
-          this.post.comments[index] = response.data
-        }
-        new Modal(document.getElementById('editCommentModal')).hide()
-      } catch (error) {
-        console.error('댓글 수정 실패:', error)
-      }
-    },
-
-    async deleteComment(comment) {
-      if (!confirm('정말로 이 댓글을 삭제하시겠습니까?')) return
-
-      try {
-        await axios.delete(`/api/comments/${comment.id}`)
-        const index = this.post.comments.findIndex(c => c.id === comment.id)
-        if (index !== -1) {
-          this.post.comments.splice(index, 1)
-          this.post.comment_count--
-        }
-      } catch (error) {
-        console.error('댓글 삭제 실패:', error)
-      }
-    },
-
-    async loadMoreComments() {
-      if (this.loadingComments) return
-
-      this.loadingComments = true
-      try {
-        const response = await axios.get(`/api/posts/${this.post.id}/comments`, {
-          params: {
-            page: this.currentPage + 1
-          }
-        })
-        this.post.comments.push(...response.data.comments)
-        this.currentPage = response.data.page
-        this.hasMoreComments = response.data.has_more
-      } catch (error) {
-        console.error('댓글 로드 실패:', error)
-      } finally {
-        this.loadingComments = false
-      }
-    },
-
     showImageModal(image) {
       this.selectedImage = image
-      new Modal(document.getElementById('imageModal')).show()
     },
-
     focusCommentInput() {
       this.$refs.commentInput.focus()
     },
-
     isCommentAuthor(comment) {
       return comment.author.id === this.$store.state.user.id
-    },
-
-    searchByTag(tag) {
-      this.$router.push({
-        path: '/community',
-        query: { tag }
-      })
-    },
-
-    async editPost() {
-      // TODO: 게시글 수정 구현
-    },
-
-    async deletePost() {
-      if (!confirm('정말로 이 게시글을 삭제하시겠습니까?')) return
-
-      try {
-        await axios.delete(`/api/posts/${this.post.id}`)
-        this.$router.push('/community')
-      } catch (error) {
-        console.error('게시글 삭제 실패:', error)
-      }
-    },
-
-    async reportPost() {
-      // TODO: 게시글 신고 구현
-    },
-
-    sharePost() {
-      // TODO: 공유 기능 구현
-    },
-
-    replyToComment(comment) {
-      this.newComment.content = `@${comment.author.username} `
-      this.$refs.commentInput.focus()
     }
   },
   created() {
