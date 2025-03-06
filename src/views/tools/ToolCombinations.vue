@@ -23,6 +23,10 @@
     <div v-if="loading" class="loading">
       <i class="fas fa-spinner fa-spin"></i> 로딩 중...
     </div>
+    <div v-if="actionMessage" :class="['action-message', actionMessage.type]">
+      <i :class="actionMessage.type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle'"></i>
+      {{ actionMessage.text }}
+    </div>
     <div v-else-if="error" class="error-message">
       <i class="fas fa-exclamation-circle"></i> {{ error }}
     </div>
@@ -46,6 +50,7 @@
               <h4>포함된 도구</h4>
               <div class="tool-chips">
                 <span v-for="toolId in combination.toolIds" :key="toolId" class="tool-chip">
+                  <i :class="getToolIcon(toolId)"></i>
                   {{ getToolName(toolId) }}
                 </span>
               </div>
@@ -95,6 +100,7 @@
               <h4>포함된 도구</h4>
               <div class="tool-chips">
                 <span v-for="toolId in combination.toolIds" :key="toolId" class="tool-chip">
+                  <i :class="getToolIcon(toolId)"></i>
                   {{ getToolName(toolId) }}
                 </span>
               </div>
@@ -147,9 +153,11 @@ export default {
     })
     
     // Get state from store
-    const loading = computed(() => store.state.loading)
-    const error = computed(() => store.state.error)
-    const allCombinations = computed(() => store.state.toolCombinations)
+    const loading = computed(() => store.state.tools.loading)
+    const error = computed(() => store.state.tools.error)
+    const allCombinations = computed(() => store.state.tools.toolCombinations)
+    const availableTools = computed(() => store.state.tools.availableTools)
+    const actionMessage = ref(null)
     
     // Filter combinations by content type
     const filteredCombinations = computed(() => {
@@ -168,16 +176,21 @@ export default {
     
     // Helper function to get tool name by ID
     const getToolName = (toolId) => {
-      // This should be replaced with actual tool data from the store
-      const toolNames = {
-        1: 'AI 이미지 메이커',
-        2: 'AI 보이스',
-        3: 'AI 비디오 에디터',
-        4: 'AI 글쓰기 도우미',
-        5: 'AI 번역기',
-        6: 'AI 자막 생성기'
+      const tool = availableTools.value.find(t => t.id === toolId)
+      return tool ? tool.name : '알 수 없는 도구'
+    }
+    
+    // Helper function to get tool icon by ID
+    const getToolIcon = (toolId) => {
+      const iconMap = {
+        1: 'fas fa-image',
+        2: 'fas fa-microphone',
+        3: 'fas fa-video',
+        4: 'fas fa-pencil-alt',
+        5: 'fas fa-language',
+        6: 'fas fa-closed-captioning'
       }
-      return toolNames[toolId] || '알 수 없는 도구'
+      return iconMap[toolId] || 'fas fa-tools'
     }
     
     // Navigation to combination detail
@@ -185,42 +198,74 @@ export default {
       router.push({ name: 'ToolCombinationDetail', params: { id } })
     }
     
+    // Show action message
+    const showMessage = (text, type = 'success', duration = 3000) => {
+      actionMessage.value = { text, type }
+      setTimeout(() => {
+        actionMessage.value = null
+      }, duration)
+    }
+
     // Use combination
-    const useCombination = (id) => {
-      // In a real implementation, this would track usage and redirect to appropriate page
-      console.log(`Using combination with ID: ${id}`)
-      // For demo purposes, just navigate to detail page
-      goToCombinationDetail(id)
+    const useCombination = async (id) => {
+      try {
+        const combination = allCombinations.value.find(c => c.id === id)
+        if (combination) {
+          // 워크플로우 초기화
+          await store.dispatch('tools/clearWorkflow')
+          
+          // 도구 조합의 각 도구를 워크플로우에 추가
+          for (const toolId of combination.toolIds) {
+            const tool = availableTools.value.find(t => t.id === toolId)
+            if (tool) {
+              await store.dispatch('tools/addWorkflowTool', tool)
+            }
+          }
+          
+          showMessage('도구 조합을 불러왔습니다.')
+          
+          // 도구 조합 상세 페이지로 이동
+          router.push({ 
+            name: 'CreateToolCombination',
+            query: { from: combination.id }
+          })
+        }
+      } catch (error) {
+        console.error('도구 조합 사용 중 오류:', error)
+        showMessage('도구 조합을 불러오는 중 오류가 발생했습니다.', 'error')
+      }
     }
     
     // Save combination to user's collection
-    const saveCombination = (id) => {
-      // In a real implementation, this would save to user's collection via API
-      console.log(`Saving combination with ID: ${id} to user's collection`)
-      const combinationToSave = allCombinations.value.find(c => c.id === id)
-      
-      if (combinationToSave) {
-        // Save a copy to user's combinations
-        store.dispatch('saveToolCombination', {
-          ...combinationToSave,
-          isPublic: false,
-        }).then(() => {
-          alert('도구 조합이 저장되었습니다.')
-        }).catch(error => {
-          console.error('Error saving combination:', error)
-          alert('도구 조합 저장 중 오류가 발생했습니다.')
-        })
+    const saveCombination = async (id) => {
+      try {
+        const combination = allCombinations.value.find(c => c.id === id)
+        if (combination) {
+          await store.dispatch('tools/createToolCombination', {
+            ...combination,
+            id: undefined, // 새로운 ID 생성을 위해 제거
+            isPublic: false // 개인 저장용으로 설정
+          })
+          showMessage('도구 조합이 저장되었습니다.')
+        }
+      } catch (error) {
+        console.error('도구 조합 저장 중 오류:', error)
+        showMessage('도구 조합 저장 중 오류가 발생했습니다.', 'error')
       }
+      
+
     }
     
     return {
       loading,
       error,
+      actionMessage,
       selectedContentType,
       contentTypes,
       filteredCombinations,
       recommendedCombinations,
       getToolName,
+      getToolIcon,
       goToCombinationDetail,
       useCombination,
       saveCombination
@@ -287,13 +332,34 @@ export default {
   border-color: #4a6cf7;
 }
 
-.loading, .error-message {
+.loading, .action-message {
   text-align: center;
-  padding: 2rem;
-  font-size: 1.1rem;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 4px;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.action-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.action-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
 }
 
 .error-message {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
   color: #d9534f;
 }
 
@@ -335,18 +401,37 @@ export default {
 }
 
 .combination-card {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 1.5rem;
+  border: 1px solid #e0e7ff;
+  border-radius: 12px;
+  padding: 1.8rem;
   background: white;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(74, 108, 247, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(90deg, #4a6cf7, #6d8bff);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
 }
 
 .combination-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 24px rgba(74, 108, 247, 0.12);
+  border-color: #c8d5ff;
+}
+
+.combination-card:hover::before {
+  opacity: 1;
 }
 
 .combination-header {
@@ -363,12 +448,14 @@ export default {
 }
 
 .content-type-badge {
-  background: #f0f5ff;
+  background: linear-gradient(135deg, #f0f5ff 0%, #e6edff 100%);
   color: #4a6cf7;
-  padding: 0.3rem 0.7rem;
+  padding: 0.4rem 0.9rem;
   border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 500;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid #e0e7ff;
+  box-shadow: 0 2px 4px rgba(74, 108, 247, 0.05);
 }
 
 .combination-description {
@@ -382,23 +469,80 @@ export default {
 }
 
 .tools-in-combination h4 {
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
-  color: #555;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  color: #333;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f0f0f0;
+  
+  &::before {
+    content: '🔧';
+    font-size: 1.2rem;
+    margin-bottom: -2px;
+  }
 }
 
 .tool-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.8rem;
+  padding: 0.5rem 0;
+  margin: -0.25rem;
 }
 
 .tool-chip {
-  background: #f5f5f5;
-  padding: 0.3rem 0.7rem;
-  border-radius: 15px;
-  font-size: 0.85rem;
-  color: #555;
+  background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  color: #4a6cf7;
+  font-weight: 500;
+  border: 1px solid #e0e7ff;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(74, 108, 247, 0.1);
+  cursor: default;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+  
+  i {
+    font-size: 1rem;
+    opacity: 0.9;
+    transition: transform 0.3s ease;
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  &:hover {
+    background: linear-gradient(135deg, #e0e7ff 0%, #d1dbff 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(74, 108, 247, 0.15);
+    
+    &::before {
+      opacity: 1;
+    }
+    
+    i {
+      transform: scale(1.1);
+    }
+  }
 }
 
 .combination-meta {
@@ -409,6 +553,22 @@ export default {
   color: #777;
 }
 
+.usage-count {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  
+  i {
+    color: #4a6cf7;
+    opacity: 0.8;
+  }
+}
+
+.creator {
+  font-weight: 500;
+  color: #666;
+}
+
 .combination-actions {
   display: flex;
   gap: 0.8rem;
@@ -416,35 +576,72 @@ export default {
 
 .use-combination-btn, .save-combination-btn {
   flex: 1;
-  padding: 0.7rem 0;
-  border-radius: 4px;
-  font-size: 0.9rem;
+  padding: 0.8rem 0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.5rem;
-  transition: background 0.2s ease;
+  gap: 0.6rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.use-combination-btn i, .save-combination-btn i {
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.use-combination-btn:hover i, .save-combination-btn:hover i {
+  transform: scale(1.1);
+}
+
+.use-combination-btn:active, .save-combination-btn:active {
+  transform: translateY(1px);
 }
 
 .use-combination-btn {
-  background: #4a6cf7;
+  background: linear-gradient(135deg, #4a6cf7 0%, #6d8bff 100%);
   color: white;
   border: none;
+  box-shadow: 0 4px 12px rgba(74, 108, 247, 0.2);
 }
 
 .use-combination-btn:hover {
-  background: #3a5ce5;
+  background: linear-gradient(135deg, #3a5ce5 0%, #5d7bff 100%);
+  box-shadow: 0 6px 16px rgba(74, 108, 247, 0.25);
 }
 
 .save-combination-btn {
   background: white;
   color: #4a6cf7;
-  border: 1px solid #4a6cf7;
+  border: 2px solid #e0e7ff;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.save-combination-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #f0f5ff 0%, #e6edff 100%);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .save-combination-btn:hover {
-  background: #f0f5ff;
+  border-color: #c8d5ff;
+  color: #3a5ce5;
+}
+
+.save-combination-btn:hover::before {
+  opacity: 1;
 }
 
 .my-combinations-link {
@@ -455,25 +652,56 @@ export default {
 .view-my-combinations {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.8rem 1.5rem;
+  gap: 0.6rem;
+  padding: 0.9rem 1.8rem;
   font-size: 1rem;
-  color: #555;
+  color: #4a6cf7;
   text-decoration: none;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background: #f9f9f9;
-  transition: background 0.2s ease;
+  border: 2px solid #e0e7ff;
+  border-radius: 8px;
+  background: white;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
+  box-shadow: 0 2px 6px rgba(74, 108, 247, 0.08);
+}
+
+.view-my-combinations i {
+  font-size: 1.1rem;
+  transition: transform 0.3s ease;
 }
 
 .view-my-combinations:hover {
-  background: #f0f0f0;
+  background: linear-gradient(135deg, #f0f5ff 0%, #e6edff 100%);
+  border-color: #c8d5ff;
+  box-shadow: 0 4px 12px rgba(74, 108, 247, 0.12);
 }
+
+.view-my-combinations:hover i {
+  transform: translateX(2px);
+}
+
+
 
 .no-combinations {
   text-align: center;
-  padding: 3rem;
-  color: #777;
+  padding: 4rem 2rem;
+  color: #666;
+  background: linear-gradient(135deg, #f8faff 0%, #f0f5ff 100%);
+  border-radius: 12px;
+  border: 1px dashed #c8d5ff;
+  margin: 2rem 0;
+}
+
+.no-combinations p {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.no-combinations p::before {
+  content: '🔍';
+  font-size: 1.4rem;
+  margin-right: 0.5rem;
+  vertical-align: middle;
 }
 
 /* 반응형 스타일 */

@@ -1,5 +1,59 @@
 <template>
   <div class="create-combination-page">
+    <div class="workflow-container">
+      <!-- 도구 목록 패널 -->
+      <div class="tools-panel">
+        <h3>사용 가능한 도구</h3>
+        <draggable
+          :list="availableTools"
+          :group="{ name: 'tools', pull: 'clone', put: false }"
+          item-key="id"
+          :clone="handleCloneNode"
+          @start="handleDragStart"
+          @end="handleDragEnd"
+        >
+          <template #item="{ element }">
+            <div class="tool-item" :class="element.type">
+              <i :class="getNodeIcon(element.type)"></i>
+              <span>{{ element.name }}</span>
+            </div>
+          </template>
+        </draggable>
+      </div>
+
+      <!-- 워크플로우 캔버스 -->
+      <div class="workflow-canvas">
+        <VueFlow
+          v-model="elements"
+          :default-viewport="{ zoom: 1 }"
+          :min-zoom="0.2"
+          :max-zoom="4"
+          class="workflow-canvas"
+          @connect="onConnect"
+          @node-drag-stop="onNodeDragStop"
+          @elements-remove="handleElementsRemove"
+        >
+          <template #node-custom="nodeProps">
+            <div
+              class="custom-node"
+              :class="[nodeProps.type, { selected: checkNodeSelected(nodeProps.id) }]"
+              v-contextmenu="(e) => handleContextMenu(e, nodeProps)"
+              @click="handleNodeSelect(nodeProps)">
+              <div class="custom-node-header">
+                <i :class="getNodeIcon(nodeProps.type)"></i>
+                <span>{{ nodeProps.label }}</span>
+              </div>
+              <div class="custom-node-body">
+                <p>{{ nodeProps.data.description }}</p>
+              </div>
+            </div>
+          </template>
+          <Background pattern-color="#aaa" gap="8" />
+          <Controls />
+          <MiniMap />
+        </VueFlow>
+      </div>
+    </div>
     <div class="page-header">
       <h1>{{ isEditing ? '도구 조합 수정' : '새 도구 조합 만들기' }}</h1>
       <p>콘텐츠 제작에 적합한 AI 도구 조합을 만들어 보세요.</p>
@@ -101,16 +155,235 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
+import draggable from 'vuedraggable'
+import { VueFlow, Background, Controls, MiniMap, useVueFlow } from '@vue-flow/core'
+import '@vue-flow/core/dist/style.css'
+import '@vue-flow/core/dist/theme-default.css'
+import '@vue-flow/controls/dist/style.css'
+import '@vue-flow/minimap/dist/style.css'
 
 export default {
   name: 'CreateToolCombination',
+  components: {
+    draggable,
+    VueFlow,
+    Background,
+    Controls,
+    MiniMap
+  },
+
+  // 사용자 정의 디렉티브
+  directives: {
+    // 우클릭 메뉴 디렉티브
+    contextmenu: {
+      mounted(el, binding) {
+        el.addEventListener('contextmenu', (e) => {
+          e.preventDefault()
+          binding.value(e)
+        })
+      },
+      unmounted(el, binding) {
+        el.removeEventListener('contextmenu', binding.value)
+      }
+    }
+  },
   setup() {
     const store = useStore()
     const router = useRouter()
     const route = useRoute()
+
+    // 컨텍스트 메뉴 상태
+    const contextMenu = ref({
+      show: false,
+      x: 0,
+      y: 0,
+      target: null
+    })
+
+    // 컨텍스트 메뉴 표시
+    const showContextMenu = (e, target) => {
+      contextMenu.value = {
+        show: true,
+        x: e.clientX,
+        y: e.clientY,
+        target
+      }
+    }
+
+    // 컨텍스트 메뉴 숨기기
+    const hideContextMenu = () => {
+      contextMenu.value.show = false
+    }
+
+    // 키보드 단축키 처리
+    const handleKeyDown = (e) => {
+      // Undo: Ctrl/Cmd + Z
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+        e.preventDefault()
+        store.dispatch('tools/undoLastAction')
+      }
+      // Delete: Delete 키
+      else if (e.key === 'Delete' && store.state.tools.selectedTool) {
+        e.preventDefault()
+        store.dispatch('tools/removeWorkflowTool', store.state.tools.selectedTool.id)
+      }
+      // Copy: Ctrl/Cmd + C
+      else if ((e.ctrlKey || e.metaKey) && e.key === 'c' && store.state.tools.selectedTool) {
+        e.preventDefault()
+        // 도구 복사 로직 추가 예정
+      }
+      // Paste: Ctrl/Cmd + V
+      else if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
+        e.preventDefault()
+        // 도구 붙여넣기 로직 추가 예정
+      }
+    }
+
+    // 키보드 이벤트 리스너 등록
+    onMounted(() => {
+      window.addEventListener('keydown', handleKeyDown)
+      window.addEventListener('click', hideContextMenu)
+    })
+
+    // 키보드 이벤트 리스너 제거
+    onUnmounted(() => {
+      window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('click', hideContextMenu)
+    })
+    const { onConnect, onNodeDragStop, project } = useVueFlow()
+
+    // Vue Flow 이벤트 핸들러 연결
+    onConnect(handleConnect)
+    onNodeDragStop(handleNodeDragStop)
+
+    // 컨텍스트 메뉴 이벤트 리스너
+    const handleContextMenu = (e, node) => {
+      showContextMenu(e, node)
+    }
+
+    // 노드 관련 함수들
+    const handleNodeSelect = (nodeProps) => {
+      selectNode(nodeProps)
+    }
+
+    const handleCloneNode = (node) => {
+      return cloneNode(node)
+    }
+
+    const handleDragStart = (event) => {
+      onDragStart(event)
+    }
+
+    const handleDragEnd = (event) => {
+      onDragEnd(event)
+    }
+
+    const handleElementsRemove = (elements) => {
+      onElementsRemove(elements)
+    }
+
+    // 아이콘 가져오기
+    const getNodeIcon = (type) => {
+      return getToolIcon(type)
+    }
+
+    // 노드 선택 상태 확인
+    const checkNodeSelected = (id) => {
+      return isNodeSelected(id)
+    }
+
+    // 워크플로우 상태
+    const elements = ref([])
+    const nodeId = ref(0)
+
+    // 도구 아이콘 매핑
+    const toolIcons = {
+      text: 'fas fa-font',
+      image: 'fas fa-image',
+      video: 'fas fa-video',
+      audio: 'fas fa-volume-up'
+    }
+
+    // 도구 아이콘 가져오기
+    const getToolIcon = (type) => toolIcons[type] || 'fas fa-tools'
+
+    // 노드 선택 관리
+    const isNodeSelected = (nodeId) => {
+      return store.state.tools.selectedTool?.id === nodeId
+    }
+
+    const selectNode = (node) => {
+      store.dispatch('tools/setSelectedTool', node)
+    }
+
+    // 노드 복제 (드래그 앤 드롭용)
+    const cloneNode = (node) => {
+      nodeId.value++
+      return {
+        ...node,
+        id: `node-${nodeId.value}`,
+        position: project({ x: 100, y: 100 })
+      }
+    }
+
+    // 드래그 시작
+    const onDragStart = () => {
+      // 드래그 시작 시 필요한 로직
+    }
+
+    // 드래그 종료
+    const onDragEnd = () => {
+      // 드래그 종료 시 필요한 로직
+    }
+
+    // 연결 생성
+    const handleConnect = (params) => {
+      const connection = {
+        id: `edge-${params.source}-${params.target}`,
+        source: params.source,
+        target: params.target,
+        type: 'smoothstep'
+      }
+      store.dispatch('tools/addWorkflowConnection', connection)
+    }
+
+    // 요소 제거
+    const onElementsRemove = (elementsToRemove) => {
+      elementsToRemove.forEach(element => {
+        if (element.type === 'node') {
+          store.dispatch('tools/removeWorkflowTool', element.id)
+        } else {
+          store.dispatch('tools/removeWorkflowConnection', element.id)
+        }
+      })
+    }
+
+    // 노드 위치 업데이트
+    const handleNodeDragStop = () => {
+      store.dispatch('tools/updateWorkflowTools', elements.value.filter(el => el.type === 'node'))
+    }
+
+    // 워크플로우 상태 감시
+    watch(
+      () => store.state.tools.workflowTools,
+      (newTools) => {
+        elements.value = [
+          ...newTools.map(tool => ({
+            id: tool.id,
+            type: 'custom',
+            data: { ...tool },
+            position: tool.position,
+            draggable: true,
+            connectable: true
+          })),
+          ...store.state.tools.workflowConnections
+        ]
+      },
+      { deep: true }
+    )
     
     const isEditing = computed(() => route.query.edit === 'true')
     const editId = computed(() => route.query.id)
@@ -285,23 +558,146 @@ export default {
     }
     
     return {
+      // 상태
       isEditing,
       loading,
       contentTypes,
       availableTools,
       combinationForm,
       toolSelectionError,
+      elements,
+      // 함수
       getCategoryName,
       isToolSelected,
       toggleToolSelection,
       saveCombination,
-      cancel
+      cancel,
+      // Vue Flow 함수
+      handleContextMenu,
+      handleNodeSelect,
+      handleCloneNode,
+      handleDragStart,
+      handleDragEnd,
+      handleElementsRemove,
+      getNodeIcon,
+      checkNodeSelected
     }
   }
 }
 </script>
 
 <style scoped>
+.workflow-container {
+  display: flex;
+  height: calc(100vh - 200px);
+  margin: 20px 0;
+  gap: 20px;
+}
+
+.tools-panel {
+  width: 250px;
+  background: #f5f5f5;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tool-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin: 5px 0;
+  background: white;
+  border-radius: 4px;
+  cursor: move;
+  transition: all 0.2s;
+}
+
+.tool-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tool-item i {
+  margin-right: 10px;
+  font-size: 1.2em;
+}
+
+.workflow-canvas {
+  flex-grow: 1;
+  background: #fafafa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.custom-node {
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  text-align: center;
+  border: 1px solid #ddd;
+  background: white;
+  width: 150px;
+}
+
+.custom-node-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.custom-node-header i {
+  margin-right: 8px;
+}
+
+.custom-node.text { border-color: #4CAF50; }
+.custom-node.image { border-color: #2196F3; }
+.custom-node.video { border-color: #F44336; }
+.custom-node.audio { border-color: #9C27B0; }
+
+.custom-node.selected {
+  box-shadow: 0 0 0 2px #2196F3;
+  transform: scale(1.02);
+}
+
+.context-menu {
+  position: fixed;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 5px 0;
+  z-index: 1000;
+}
+
+.context-menu-item {
+  padding: 8px 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.context-menu-item:hover {
+  background: #f5f5f5;
+}
+
+.context-menu-item i {
+  margin-right: 8px;
+  font-size: 14px;
+  width: 20px;
+  text-align: center;
+}
+
+.vue-flow__minimap {
+  transform: scale(0.8);
+}
+
+.vue-flow__controls {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 .create-combination-page {
   max-width: 900px;
   margin: 0 auto;

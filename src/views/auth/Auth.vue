@@ -1,84 +1,114 @@
 <template>
   <div class="auth-page">
-    <div class="auth-container">
-      <div class="auth-header">
-        <h1>{{ isLogin ? '로그인' : '회원가입' }}</h1>
-        <p>AI 크리에이터 플랫폼에 오신 것을 환영합니다</p>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="card shadow-lg">
+            <div class="card-body p-5">
+              <div class="text-center mb-4">
+                <h1 class="h3">{{ isLogin ? '로그인' : '회원가입' }}</h1>
+                <p class="text-muted">AI 크리에이터 플랫폼에 오신 것을 환영합니다</p>
+              </div>
+
+              <div v-if="error" class="alert alert-danger" role="alert">
+                {{ error }}
+              </div>
+
+              <form @submit.prevent="handleSubmit">
+                <div v-if="!isLogin" class="mb-3">
+                  <label for="username" class="form-label">사용자 이름</label>
+                  <input 
+                    type="text" 
+                    id="username" 
+                    v-model="form.username"
+                    class="form-control"
+                    :class="{ 'is-invalid': validationErrors.username }"
+                    placeholder="사용자 이름을 입력하세요"
+                    required
+                  >
+                  <div class="invalid-feedback" v-if="validationErrors.username">
+                    {{ validationErrors.username }}
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="email" class="form-label">이메일</label>
+                  <input 
+                    type="email" 
+                    id="email" 
+                    v-model="form.email"
+                    class="form-control"
+                    :class="{ 'is-invalid': validationErrors.email }"
+                    placeholder="이메일을 입력하세요"
+                    required
+                  >
+                  <div class="invalid-feedback" v-if="validationErrors.email">
+                    {{ validationErrors.email }}
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="password" class="form-label">비밀번호</label>
+                  <input 
+                    type="password" 
+                    id="password" 
+                    v-model="form.password"
+                    class="form-control"
+                    :class="{ 'is-invalid': validationErrors.password }"
+                    placeholder="비밀번호를 입력하세요"
+                    required
+                  >
+                  <div class="invalid-feedback" v-if="validationErrors.password">
+                    {{ validationErrors.password }}
+                  </div>
+                </div>
+
+                <div v-if="!isLogin" class="mb-3">
+                  <label for="confirmPassword" class="form-label">비밀번호 확인</label>
+                  <input 
+                    type="password" 
+                    id="confirmPassword" 
+                    v-model="form.confirmPassword"
+                    class="form-control"
+                    :class="{ 'is-invalid': validationErrors.confirmPassword }"
+                    placeholder="비밀번호를 다시 입력하세요"
+                    required
+                  >
+                  <div class="invalid-feedback" v-if="validationErrors.confirmPassword">
+                    {{ validationErrors.confirmPassword }}
+                  </div>
+                </div>
+
+                <button 
+                  type="submit" 
+                  class="btn btn-primary w-100 mb-3"
+                  :disabled="loading"
+                >
+                  <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  {{ isLogin ? '로그인' : '회원가입' }}
+                </button>
+
+
+                <div class="text-center mt-3">
+                  <p class="mb-0">
+                    {{ isLogin ? '계정이 없으신가요?' : '이미 계정이 있으신가요?' }}
+                    <a href="#" @click.prevent="toggleAuthMode" class="text-primary ms-1">
+                      {{ isLogin ? '회원가입' : '로그인' }}
+                    </a>
+                  </p>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
-
-      <form @submit.prevent="handleSubmit" class="auth-form">
-        <div v-if="!isLogin" class="form-group">
-          <label for="username">사용자 이름</label>
-          <input 
-            type="text" 
-            id="username" 
-            v-model="form.username"
-            placeholder="사용자 이름을 입력하세요"
-            required
-          >
-        </div>
-
-        <div class="form-group">
-          <label for="email">이메일</label>
-          <input 
-            type="email" 
-            id="email" 
-            v-model="form.email"
-            placeholder="이메일을 입력하세요"
-            required
-          >
-        </div>
-
-        <div class="form-group">
-          <label for="password">비밀번호</label>
-          <input 
-            type="password" 
-            id="password" 
-            v-model="form.password"
-            placeholder="비밀번호를 입력하세요"
-            required
-          >
-        </div>
-
-        <div v-if="!isLogin" class="form-group">
-          <label for="confirmPassword">비밀번호 확인</label>
-          <input 
-            type="password" 
-            id="confirmPassword" 
-            v-model="form.confirmPassword"
-            placeholder="비밀번호를 다시 입력하세요"
-            required
-          >
-        </div>
-
-        <button type="submit" class="auth-button">
-          {{ isLogin ? '로그인' : '회원가입' }}
-        </button>
-
-        <div class="social-auth">
-          <p>또는</p>
-          <button 
-            type="button" 
-            class="social-button google"
-            @click="handleGoogleAuth"
-          >
-            <i class="fab fa-google"></i>
-            Google로 계속하기
-          </button>
-        </div>
-
-        <p class="auth-switch">
-          {{ isLogin ? '계정이 없으신가요?' : '이미 계정이 있으신가요?' }}
-          <a href="#" @click.prevent="toggleAuthMode">
-            {{ isLogin ? '회원가입' : '로그인' }}
-          </a>
-        </p>
-      </form>
     </div>
   </div>
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex';
+
 export default {
   name: 'AuthPage',
   data() {
@@ -89,49 +119,79 @@ export default {
         email: '',
         password: '',
         confirmPassword: ''
-      }
+      },
+      validationErrors: {}
     }
   },
+  computed: {
+    ...mapState('auth', ['error', 'loading'])
+  },
   methods: {
-    handleSubmit() {
-      if (this.isLogin) {
-        this.login()
-      } else {
-        this.register()
+    ...mapActions('auth', ['login', 'register']),
+
+    validateForm() {
+      this.validationErrors = {};
+      
+      if (!this.form.email) {
+        this.validationErrors.email = '이메일을 입력해주세요';
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.email)) {
+        this.validationErrors.email = '올바른 이메일 형식이 아닙니다';
       }
+
+      if (!this.form.password) {
+        this.validationErrors.password = '비밀번호를 입력해주세요';
+      } else if (this.form.password.length < 6) {
+        this.validationErrors.password = '비밀번호는 최소 6자 이상이어야 합니다';
+      }
+
+      if (!this.isLogin) {
+        if (!this.form.username) {
+          this.validationErrors.username = '사용자 이름을 입력해주세요';
+        }
+
+        if (!this.form.confirmPassword) {
+          this.validationErrors.confirmPassword = '비밀번호 확인을 입력해주세요';
+        } else if (this.form.password !== this.form.confirmPassword) {
+          this.validationErrors.confirmPassword = '비밀번호가 일치하지 않습니다';
+        }
+      }
+
+      return Object.keys(this.validationErrors).length === 0;
     },
-    async login() {
+
+    async handleSubmit() {
+      if (!this.validateForm()) return;
+
       try {
-        // 로그인 로직 구현
-        console.log('로그인 시도:', this.form.email)
+        if (this.isLogin) {
+          await this.login({
+            email: this.form.email,
+            password: this.form.password
+          });
+        } else {
+          await this.register({
+            username: this.form.username,
+            email: this.form.email,
+            password: this.form.password
+          });
+        }
+        this.$router.push('/dashboard');
       } catch (error) {
-        console.error('로그인 실패:', error)
+        // Error is handled by the store
       }
     },
-    async register() {
-      try {
-        // 회원가입 로직 구현
-        console.log('회원가입 시도:', this.form)
-      } catch (error) {
-        console.error('회원가입 실패:', error)
-      }
-    },
-    async handleGoogleAuth() {
-      try {
-        // Google 인증 로직 구현
-        console.log('Google 인증 시도')
-      } catch (error) {
-        console.error('Google 인증 실패:', error)
-      }
-    },
+
+
+
     toggleAuthMode() {
-      this.isLogin = !this.isLogin
+      this.isLogin = !this.isLogin;
       this.form = {
         username: '',
         email: '',
         password: '',
         confirmPassword: ''
-      }
+      };
+      this.validationErrors = {};
     }
   }
 }
@@ -142,79 +202,47 @@ export default {
   min-height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 2rem;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
-.auth-container {
-  background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
-}
-
-.auth-header {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.auth-header h1 {
-  font-size: 2rem;
-  color: var(--primary-color);
-  margin-bottom: 0.5rem;
-}
-
-.auth-header p {
-  color: #666;
-}
-
-.auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.form-group label {
-  font-weight: 500;
-  color: #333;
-}
-
-.form-group input {
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-}
-
-.auth-button {
-  padding: 1rem;
-  background: var(--primary-color);
-  color: white;
+.card {
   border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  border-radius: 15px;
 }
 
-.auth-button:hover {
-  background: var(--primary-dark-color);
+.card-body {
+  padding: 2.5rem;
+}
+
+.form-control {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  font-size: 1rem;
+}
+
+.form-control:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+.btn-primary {
+  padding: 0.75rem;
+  font-weight: 500;
+  border-radius: 8px;
+}
+
+.btn-outline-secondary {
+  padding: 0.75rem;
+  font-weight: 500;
+  border-radius: 8px;
+}
+
+.text-primary {
+  text-decoration: none;
+}
+
+.text-primary:hover {
+  text-decoration: underline;
 }
 
 .social-auth {

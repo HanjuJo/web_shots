@@ -23,16 +23,16 @@ const routes = [
     component: () => import('@/views/tools/ToolCombinations.vue')
   },
   {
-    path: '/tools/combinations/:id',
-    name: 'ToolCombinationDetail',
-    component: () => import('@/views/tools/ToolCombinationDetail.vue'),
-    props: true
-  },
-  {
     path: '/tools/my-combinations',
     name: 'MyToolCombinations',
     component: () => import('@/views/tools/MyToolCombinations.vue'),
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/tools/combinations/:id',
+    name: 'ToolCombinationDetail',
+    component: () => import('@/views/tools/ToolCombinationDetail.vue'),
+    props: true
   },
   {
     path: '/tools/combinations/create',
